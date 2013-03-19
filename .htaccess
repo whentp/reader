@@ -1,0 +1,21 @@
+RewriteEngine on
+
+# my/items/action
+#RewriteRule ^my/items/([^/\.]+)$ sys.controller.php?c=items&a=$1 [L]
+
+# my/items/action/option
+#RewriteRule ^my/items/([^/\.]+)/([^/\.]+)$ sys.controller.php?c=items&a=$1&option=$2 [L]
+
+# my/{action:feed}/{id}
+#RewriteRule ^my/feed/([^/\.]+)$ sys.controller.php?c=items&a=feed&id=$1 [L]
+# my/{action:feeds}/{id}
+#RewriteRule ^my/feeds/([^/\.]+)$ sys.controller.php?c=items&a=feeds&id=$1 [L]
+
+# my/outlines/{id}
+#RewriteRule ^my/outlines/([^/\.]+)$ sys.controller.php?c=outlines&a=$1 [L]
+
+
+#my/{controller}/{action}
+RewriteRule ^my/([^/\.]+)/([^/\.]+)$ sys.controller.php?c=$1&a=$2 [L,QSA]
+
+

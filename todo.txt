@@ -1,0 +1,2 @@
+* unread count is incorrect when a rss belongs to more than one outline.
+* reorder items in navbar.

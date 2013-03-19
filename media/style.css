@@ -1,0 +1,317 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.clearfix:after {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
+}
+.clearfix { display: inline-block; }
+html[xmlns] .clearfix { display: block; }
+* html .clearfix { height: 1%; }
+
+
+/* by whentp*/
+
+html, div, table, tr, td, li, ul, a, b, p{
+	font-size:9pt;
+}
+
+body{
+	overflow:hidden;
+}
+
+#banner{
+	height: 32px;
+	background:#999;
+}
+
+#nav{
+	display: block;
+	float: left;
+	width:200px;
+	overflow-y: scroll;
+}
+
+#split{
+	display: block;
+	float:left;
+	width:5px;
+}
+
+#main{
+	display:block;
+	float:left;
+}
+
+#toolbar{
+	display:block;
+	width:100%;
+	height: 40px;
+}
+
+#list{
+	width:100%;
+	display:block;
+	height: 20px;
+	overflow-y: scroll;
+}
+
+.item{
+	float: left;
+	width: 100%;
+	height: 25px;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+
+.item-left{
+	float: left;
+	width: 200px; /*Width of left column*/
+	margin-left: -100%;
+	padding-left:5px;
+	height: 25px;
+	line-height: 25px;
+	overflow: hidden;
+}
+
+.title{
+	float:left;
+	margin: 0 180px 0 220px;
+	height: 25px;
+	line-height: 25px;
+	overflow: hidden;
+}
+
+.item-right{
+	float: left;
+	width: 160px; /*Width of right column*/
+	margin-left: -160px; /*Set left marginto -(RightColumnWidth)*/
+	height: 25px;
+	line-height: 25px;
+}
+
+.item-datetime{
+	display: float;
+	float: left;
+}
+
+.item-link{
+	display: float;
+	float: right;
+	padding-right: 10px;
+}
+
+.item-abstract{
+	color: #aaa;
+	font-weight:normal;
+}
+.title-unread{
+	font-weight:bold;
+}
+.item-read{
+	background: #efefef;
+}
+
+#nav a{
+	display: block;
+	width: 100%;
+	height: 20px;
+	line-height: 20px;
+	overflow: hidden;
+	text-decoration: none;
+	vertical-align: middle;
+	color: #000;
+}
+span.unread{
+	font-weight: normal;
+}
+
+#nav a.feeds{
+	border-top: 1px solid #ddd;
+}
+
+#nav a.feed{
+	padding-left: 20px;
+}
+
+#nav a.selected, a:hover{
+	background: #ddd;
+}
+
+.icon-folder{
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-color: rgba(0, 0, 0, 0);
+	background-image: url(icon-sprite.png);
+	background-origin: padding-box;
+	background-position: -42px -118px;
+	background-size: auto;
+	color: rgb(0, 0, 0);
+	cursor: pointer;
+	display: block;
+	float: left;
+	height: 21px;
+	line-height: 21px;
+	list-style-type: none;
+	margin-bottom: 0px;
+	margin-left: 10px;
+	margin-right: 2px;
+	margin-top: 0px;
+	text-align: left;
+	white-space: nowrap;
+	width: 21px;
+	opacity: 0.4;
+}
+
+.icon-link{
+	background-color: rgba(0, 0, 0, 0);
+	background-image: url(png.png);
+	background-repeat: no-repeat;
+	background-position: 0% -416px;
+	display: block;
+	float: none;
+	height: 15px;
+	width: 15px;
+	margin: 5px;
+	padding: 0;
+	opacity: 0.4;
+}
+
+.icon-unstarred{
+	background-color: rgba(0, 0, 0, 0);
+	background-image: url(png.png);
+	background-repeat: no-repeat;
+	background-position: -126px -1px;
+	display: block;
+	float: left;
+	height: 15px;
+	width: 15px;
+	padding: 0;
+	opacity: 0.4;
+	margin:5px;
+}
+
+.icon-starred{
+	background-color: rgba(0, 0, 0, 0);
+	background-image: url(png.png);
+	background-repeat: no-repeat;
+	background-position: -64px -33px;
+	display: block;
+	float: left;
+	height: 15px;
+	width: 15px;
+	padding: 0;
+	opacity: 0.4;
+	margin:5px;
+}
+
+.item-outline{
+	display:float;
+	float:left;
+	height: 25px;
+	width: 150px;
+	margin-left: 5px;
+	line-height: 25px;
+}
+
+.icon {
+	background: url(icon-sprite.png) no-repeat;
+}
+
+.icon, .scroll-tree .favicon {
+	display: block;
+	width: 21px;
+	height: 21px;
+	margin-right: 2px;
+	float: left;
+}
+
+.item-reading{
+	background: #eee;
+	border-left: 1px solid #2266ee;
+}
+
+.item-content{
+	width: 100%;
+	display: block;
+	float: left;
+	padding: 1em;
+	line-height: 1.5em;
+	max-width:600px;
+	border-left: 1px solid #2266ee;
+}
+
+.item-content p{
+	margin-top: 1em;
+}
+
+.item-content h2 a{
+	font-size: 1.5em;
+	color: #55aacc;
+	text-decoration: none;
+	line-height: 2em;
+	font-weight: bold;
+	margin: 1em;
+}
+
+.item-content a{
+	color: #55aacc;
+	text-decoration: none;
+}
+
+.hidediv{
+	display:none;
+}
+
+.item-content-title{
+
+}
+
+.boldfont{
+	font-weight: bold;
+}

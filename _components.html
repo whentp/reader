@@ -1,0 +1,41 @@
+<script type="text/html" id="items">
+
+	<div class="item {{if read}}item-read {{/if}}clearfix unbinditem" data="${id}">
+		<div class="title clearfix">
+			<span{{if !read}} class="title-unread"{{/if}}>${title}</span>
+			- 
+			<span class="item-abstract"> ${getTitleContent(description)}No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. </span>
+		</div>
+		<div class="item-left clearfix">
+			<div class="markstar ${starred?'icon-starred':'icon-unstarred'}" data="${id}"></div> 
+			<div class="item-outline">${cache.outlineTitle[feed_id]}</div>
+		</div>
+		<div class="item-right clearfix">
+			<div class="item-datetime clearfix">${toDateTime(pubDate)}</div>
+			<div class="item-link clearfix">
+				<a href="${link}" target='_blank' class="icon-link"></a>
+			</div>
+		</div>
+	</div>
+	<div class="item-content hidediv clearfix"></div>
+
+</script>
+
+<script type="text/html" id="outlines">
+	<ul>
+		<li><a class="feeds all" href="my/items/all" data=""><span class="icon-folder"></span>All items <span class='unread'></span> </a></li>
+		<li><a class="feeds" href="my/items/starred" data=""><span class="icon-folder"></span>Starred items <span class='unread'></span></a></li>
+		<li>&nbsp;</li>
+		<ul>
+		{{each(k, v) obj}}
+		<li>
+		<a class="feeds" href="my/items/feeds?id=${v.id}" data="${v.id}"><span class="icon-folder"></span>${k} <span class='unread'></span></a>
+		<ul>
+			{{each(i,item) v.items}}
+			<li><a class="feed" href="my/items/feed?id=${item.feed_id}" data="${item.feed_id}"><img src='gif.gif' /> ${item.title} <span class='unread'></span></a></li>
+			{{/each}}
+		</ul>
+		</li>
+		{{/each}}
+	</ul>
+</script>
