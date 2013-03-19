@@ -4,7 +4,7 @@ CREATE TABLE `users`
 (
 	--created by @whentp, using sqlite3
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	openidmd5 VARCHAR(50);
+	openidmd5 VARCHAR(50)
 );
 
 CREATE TABLE `outlines`
