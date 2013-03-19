@@ -5,7 +5,7 @@ how to set up a reader environment
 3. set permission of cache to 777.
 4. set config.php properly, especially the definition of HOSTNAME.
 5. login with your google openid.
-
+6. browse and see an ugly interface. add some feeds and run cron.fetchfeed.php then the ui will be fine.
 
 how to subscribe a feed
 
