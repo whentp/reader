@@ -25,7 +25,7 @@ function updateFeedItem($item){
 	url VARCHAR(50)
  */
 
-	$id = getIdIfExists('SELECT id FROM items WHERE link=:link', array(':link' => $item->link), 'id');
+	$id = getIdIfExists('SELECT id FROM items WHERE link=:link LIMIT 1', array(':link' => $item->link), 'id');
 	if($id === false) {
 		if (!isset($item->author)){
 			$item->author = 'No Name';
@@ -60,6 +60,10 @@ function fetchFeedItems($url, $url_id){
 				'description' => $item->get_content(),
 				'when_fetch' => $when_fetch
 			));
+
+			if($tmp = $item->get_author()){
+				$post->author = $tmp->get_name();
+			}
 
 			if($post->pubDate == '' || ! $post->pubDate){
 				$post->pubDate = $when_fetch;	

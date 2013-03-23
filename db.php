@@ -17,13 +17,13 @@ function getIdIfExists($sql, $bindData = array(), $idName = 'id'){
 	return false;
 }
 
-function getIdByInsert($tableName, $values){
+function getIdByInsert($tableName, $valueitems){
 	global $db;
 	$names = array();
 	$values = array();
 	$binddata = array();
 
-	foreach($values as $k=>$v){
+	foreach($valueitems as $k=>$v){
 		$names[] = $k;
 		$values[] = ':'.$k;
 		$binddata[':'.$k] = $v;
