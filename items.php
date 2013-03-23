@@ -32,7 +32,7 @@ function getItems($options){
 		$timestamp = (int)$options->timestamp;
 		$since_id = (int)$options->since_id;
 		$whereclause[] ="(items.pubDate < $timestamp OR (items.pubDate = $timestamp AND items.id < $since_id))";
-	//var_dump($whereclause);	
+		//var_dump($whereclause);	
 	}
 
 	// outline_option specifies outline_id or feed_id, otherwise all items will be listed.
@@ -40,7 +40,7 @@ function getItems($options){
 	if (isset($options->outline_id) && $options->outline_id){
 		$outline_option = 'AND t2.outline_id = '.((int)$options->outline_id);
 	}
-	if (isset($options->feed_id) && $options->feed_id){
+	if (isset($options->feed_id) && $options->feed_id>-1){
 		$outline_option = 'AND t2.feed_id = '.((int)$options->feed_id);
 	}
 
@@ -60,7 +60,7 @@ function getItems($options){
 sqlend;*/
 
 	$sql =<<<sqlend
-		SELECT items.id, items.title, items.link, items.pubDate, items.description, items.feed_id, ((t2.read_until_id >= items.id AND t1.read IS NULL) OR t1.read) AS read, t1.starred FROM items 
+		SELECT items.id, items.title, items.link, items.pubDate, items.author, items.description, items.feed_id, ((t2.read_until_id >= items.id AND t1.read IS NULL) OR t1.read) AS read, t1.starred FROM items 
 			INNER JOIN feed_statuses AS t2 ON items.feed_id = t2.feed_id AND t2.user_id = $user_id $outline_option
 			LEFT JOIN item_statuses AS t1 ON t1.item_id = items.id AND t1.user_id = $user_id
 			$whereclause
@@ -84,7 +84,7 @@ sqlend;
 
 function setItemRead($options){
 	global $db;
-		$default_options = array(
+	$default_options = array(
 		'item'=>-1,
 		'user'=>-1,
 		'read'=>1
@@ -131,7 +131,7 @@ sqlend;
 
 function setItemStarred($options){
 	global $db;
-		$default_options = array(
+	$default_options = array(
 		'item'=>-1,
 		'user'=>-1,
 		'starred'=>1

@@ -25,22 +25,19 @@ function updateFeedItem($item){
 	url VARCHAR(50)
  */
 
-	global $db;
-
-	$sql = 'SELECT id FROM items WHERE link=:link';
-	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-	$conn->execute(array(':link' => $item->link));
-	$rs = $conn->fetchAll();
-	if(count($rs) == 0) {
-		$sql = 'INSERT INTO items(feed_id, title, link, description, pubDate, when_fetch) VALUES(:feed_id, :title, :link, :description, :pubDate, :when_fetch)';
-		$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-		$conn->execute(array(
-			':feed_id' => $item->feed_id,
-			':title' => $item->title,
-			':link' => $item->link,
-			':description' => $item->description,
-			':pubDate' => $item->pubDate,
-			':when_fetch' => $item->when_fetch
+	$id = getIdIfExists('SELECT id FROM items WHERE link=:link', array(':link' => $item->link), 'id');
+	if($id === false) {
+		if (!isset($item->author)){
+			$item->author = 'No Name';
+		}
+		getIdByInsert('items', array(
+			'feed_id' => $item->feed_id,
+			'title' => $item->title,
+			'link' => $item->link,
+			'description' => $item->description,
+			'pubDate' => $item->pubDate,
+			'author' => $item->author,
+			'when_fetch' => $item->when_fetch
 		));
 	}
 }

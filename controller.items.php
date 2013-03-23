@@ -20,11 +20,13 @@ class items{
 
 		$since_id = isset($objGET->since_id)?$objGET->since_id:-1;
 		$timestamp = isset($objGET->timestamp)?$objGET->timestamp:-1;
-
+		$outline_id = isset($objGET->outline)?$objGET->outline:-1;
+		
 		echo JSON(getItems(array(
 			'unread'=>$objGET->unread,
 			'feed_id'=>$objGET->id,
 			'timestamp'=>$timestamp,
+			'outline_id'=>$outline_id,
 			'since_id'=>$since_id
 		)));
 	}

@@ -3,7 +3,7 @@ define('IS_IN_READER', true);
 require_once 'common.php'; 
 require_once 'rss.clawer.php';
 
-echo "Import is stopped.\n\n";
+//echo "Import is stopped.\n\n";
 
 $items = feedList();
 $count = count($items);

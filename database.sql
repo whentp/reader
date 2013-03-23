@@ -49,6 +49,7 @@ CREATE TABLE `items`
 	feed_id INTEGER,
 	title VARCHAR(50),
 	link VARCHAR(50),
+	author VARCHAR(50),
 	description TEXT,
 	pubDate DATETIME,
 	when_fetch DATETIME,

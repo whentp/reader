@@ -246,7 +246,6 @@ span.unread{
 	height: 15px;
 	width: 15px;
 	padding: 0;
-	opacity: 0.4;
 	margin:5px;
 }
 
@@ -314,4 +313,14 @@ span.unread{
 
 .boldfont{
 	font-weight: bold;
+}
+
+#bottom-loader{
+background: no-repeat 50% 50% url(loader.gif) rgba(0, 0, 0, 0.2);
+display: none;
+height: 30px;
+line-height: 18px;
+position: absolute;
+width: 80px;
+z-index: 1000;
 }

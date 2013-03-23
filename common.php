@@ -2,17 +2,26 @@
 
 checkSafe();
 
+error_reporting(E_ALL);
 require_once 'db.php';
 require_once 'feeds.php';
 require_once 'items.php';
 require_once 'users.php';
-
 require_once 'config.php';
 
 function checkSafe(){
 	if (!defined('IS_IN_READER')){
 		die('Bye.');
 	}
+}
+
+// in an include used on every page load:
+if (get_magic_quotes_gpc()) {
+    foreach (array('_GET', '_POST', '_COOKIE', '_REQUEST') as $src) {
+        foreach ($$src as $key => $val) {
+            $$src[$key] = stripslashes($val);
+        }
+    }
 }
 
 function arrayRecursive(&$array, $function, $apply_to_keys_also = false){

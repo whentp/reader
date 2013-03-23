@@ -3,80 +3,62 @@
 require_once 'db.php';
 
 function feedExists($url){
-	global $db;
-
-	$sql = 'SELECT id, link FROM feeds WHERE link = :url';
-	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-	$conn->execute(array(':url' => $url));
-	$rs = $conn->fetchAll();
-
-	foreach($rs as $a){
-		return $a['id'];
-	}
-	return false;
+	$sql = 'SELECT id, link FROM feeds WHERE link = :url LIMIT 1';
+	$bindData = array(':url' => $url);
+	return getIdIfExists($sql, $bindData, $idName = 'id');
 }
 
 function feedAdd($link, $title='', $description=''){
-	global $db;
 	$feed_id = feedExists($link);
 	if ($feed_id === false){
-		$sql = 'INSERT INTO feeds(link, title, description) VALUES(:link, :title, :description)';
-		$conn = $db->prepare($sql);
-		$conn->execute(array(':link' => $link, ':title' => $title, ':description' => $description));
-		$feed_id = $db->lastInsertId();
+		$data = array('link' => $link, 'title' => $title, 'description' => $description);
+		$feed_id = getIdByInsert('feeds', $data);
 	}
 	return $feed_id;
 }
 
 function outlineExists($title, $text, $user_id){
-	global $db;
-
-	$sql = 'SELECT id, title, text FROM outlines WHERE title = :title AND text = :text AND user_id = :user';
-	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-	$conn->execute(array(
-		':title' => $title,
-		':text' => $text,
-		':user' => $user_id
-	));
-	$rs = $conn->fetchAll();
-
-	foreach($rs as $a){
-		return (int)$a['id'];
-	}
-	return false;
+	return getIdIfExists(
+		'SELECT id FROM outlines WHERE title = :title AND text = :text AND user_id = :user LIMIT 1', array(
+			':title' => $title,
+			':text' => $text,
+			':user' => $user_id
+		), 'id');
 }
 
 function outlineAdd($title='', $text='', $user_id=''){
-	global $db;
 	if (($outline_id = feedExists($title)) !== false){
 		return $outline_id;
 	}
-	$sql = 'INSERT INTO outlines(text, title, user_id) VALUES(:text, :title, :user)';
-	$conn = $db->prepare($sql);
-	$conn->execute(array(
-		':title' => $title,
-		':text' => $text,
-		':user' => $user_id
+	return getIdByInsert('outlines', array(
+		'title' => $title,
+		'text' => $text,
+		'user_id' => $user_id
 	));
-	return (int)$db->lastInsertId();
+}
+
+function feedStatusExists($feed_id, $outline_id, $user_id){
+	return getIdIfExists(
+		'SELECT id FROM feed_statuses WHERE feed_id = :feed_id AND outline_id = :outline_id AND user_id = :user_id LIMIT 1', array(
+			':feed_id' => $feed_id,
+			':outline_id' => $outline_id,
+			':user_id' => $user_id
+		), 'id');
 }
 
 function feedStatusAdd($feed_id, $outline_id, $user_id){
-	global $db;
-
-	$sql = 'INSERT INTO feed_statuses(feed_id, outline_id, user_id, read, read_until_id) VALUES(:feed_id, :outline_id, :user_id, 0, 0)';
-	$conn = $db->prepare($sql);
-	$conn->execute(array(
-		':feed_id' => $feed_id,
-		':outline_id' => $outline_id,
-		':user_id' => $user_id
-	));
+	return getIdByInsert('feed_statuses', array(
+		'feed_id' => $feed_id,
+		'outline_id' => $outline_id,
+		'user_id' => $user_id,
+		'read' => 0,
+		'read_until_id' => 0));
 }
 
 function loadFromGoogleReaderFiles($filename, $user_id){
 	$txt = file_get_contents($filename);
 	importFromOpmlText($txt, $user_id);
-	
+
 }
 
 function importFromOpmlText($text, $user_id){
@@ -102,7 +84,9 @@ function importFromOpmlText($text, $user_id){
 				'description'=> (string) $attr->text
 			));
 			$feed_id = feedAdd($r->link, $r->title, $r->description);
-			feedStatusAdd($feed_id, $outline_id, $user_id);
+			if (feedStatusExists($feed_id, $outline_id, $user_id) === false){
+				feedStatusAdd($feed_id, $outline_id, $user_id);
+			}
 		}
 	}
 }
