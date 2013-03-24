@@ -7,6 +7,8 @@ how to set up a reader environment
 5. login with your google openid.
 6. browse and see an ugly interface. add some feeds and run cron.fetchfeed.php then the ui will be fine.
 
+IMPORTANT: Please run cron.fetchfeed.php first, either manually or setup a cron job !!!
+
 
 how to subscribe a feed
 
