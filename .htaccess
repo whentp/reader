@@ -1,6 +1,7 @@
 RewriteEngine on
 
 RewriteRule ^my/([^/\.]+)/([^/\.]+)$ sys.controller.php?c=$1&a=$2 [L,QSA]
+RewriteRule ^user/([^/\.]+)/([^/\.]+)$ sys.controller.php?c=user&a=$2&username=$1 [L,QSA]
 
 <FilesMatch ".db$">
 Require all denied

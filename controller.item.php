@@ -43,6 +43,26 @@ class item{
 			))
 		));
 	}
+	public function setShare(){
+		global $objPOST;
+		echo JSON(array('code'=>
+			setItemShared(array(
+				'item'=>$objPOST->id, 
+				'user'=>getUserId(),
+				'shared'=>1
+			))
+		));
+	}
+	public function setUnshare(){
+		global $objPOST;
+		echo JSON(array('code'=>
+			setItemShared(array(
+				'item'=>$objPOST->id, 
+				'user'=>getUserId(),
+				'shared'=>0
+			))
+		));
+	}
 	public function getRead(){
 		echo 'hahahaha';
 	}

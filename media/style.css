@@ -32,8 +32,7 @@ ol, ul {
 blockquote, q {
 	quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
+blockquote:before, blockquote:after, q:before, q:after {
 	content: '';
 	content: none;
 }
@@ -75,6 +74,7 @@ body{
 	float: left;
 	width:200px;
 	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
 #split{
@@ -99,6 +99,7 @@ body{
 	display:block;
 	height: 20px;
 	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
 .item{
@@ -125,6 +126,14 @@ body{
 	height: 25px;
 	line-height: 25px;
 	overflow: hidden;
+}
+
+.item-shareicon{
+	color: #fff;
+	font-family: tahoma;
+	background: #3366bb;
+	font-weight: normal;
+	border: 1px solid #224466;
 }
 
 .item-right{
@@ -249,6 +258,19 @@ span.unread{
 	margin:5px;
 }
 
+.icon-sharelist{
+	background-color: rgba(0, 0, 0, 0);
+	background-image: url(icon-sprite.png);
+	background-repeat: no-repeat;
+	background-position: 0px -79px;
+	display: block;
+	float: left;
+	height: 20px;
+	width: 20px;
+	padding: 0;
+	margin:5px;
+}
+
 .item-outline{
 	display:float;
 	float:left;
@@ -278,11 +300,17 @@ span.unread{
 .item-content{
 	width: 100%;
 	display: block;
-	float: left;
+	float: left;	
+	border-left: 1px solid #2266ee;
+}
+
+.item-displaycontent{
+	width: 100%;
+	display: block;
+	float: left;	
 	padding: 1em;
 	line-height: 1.5em;
 	max-width:600px;
-	border-left: 1px solid #2266ee;
 }
 
 .item-content p{
@@ -316,11 +344,20 @@ span.unread{
 }
 
 #bottom-loader{
-background: no-repeat 50% 50% url(loader.gif) rgba(0, 0, 0, 0.2);
-display: none;
-height: 30px;
-line-height: 18px;
-position: absolute;
-width: 80px;
-z-index: 1000;
+	background: no-repeat 50% 50% url(loader.gif) rgba(0, 0, 0, 0.2);
+	display: none;
+	height: 30px;
+	line-height: 18px;
+	position: absolute;
+	width: 80px;
+	z-index: 1000;
+}
+
+.item-toolbar{
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}
+.item-toolbar a{
+	height:20px;
+	line-height:20px;
 }

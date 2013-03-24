@@ -151,8 +151,52 @@ function loadItems(url, since_id, timestamp){
           $('.item-reading').removeClass('item-reading');
           $('div.item-content').empty().addClass('hidediv');
           $(this).addClass('item-reading');
+
+          // Scroll to the top
+          var child = $(this);
+          var parent = child.parent();
+          parent.scrollTop(parent.scrollTop() + child.position().top - parent.position().top);
+
           var content = $(this).next();
-          content.removeClass('hidediv').empty().append($('#displaycontent').tmpl(tmpobj));
+          content.removeClass('hidediv').empty()
+          .append($('#displaycontent').tmpl(tmpobj))
+          .append($('#item-toolbar').tmpl(tmpobj));
+
+          $('div.item-toolbar').find('input[name=unread]').click(function(){
+              var tmpobj = cache.items[$(this).attr('data')];
+              var checkbox = $(this);
+              var unread = checkbox.is(':checked');
+              var url = unread ?'my/item/unread':'my/item/read';
+              $.post(url, {id: tmpobj.id}, function(data){
+                  getUnreadCount();
+                  var jobj = checkbox.parent().parent().prev();
+                  if(unread){
+                    jobj.find('div.title span:first').addClass('title-unread');
+                    jobj.removeClass('item-read');
+                  }else{
+                    jobj.addClass('item-read');
+                    jobj.find('span.title-unread').removeClass('title-unread');
+                  }
+                }, 'json');
+            });
+
+          $('div.item-toolbar').find('input[name=shared]').click(function(){
+              var tmpobj = cache.items[$(this).attr('data')];
+              var checkbox = $(this);
+              var shared = checkbox.is(':checked');
+              console.log(shared);
+              var url = shared ?'my/item/share':'my/item/unshare';
+              $.post(url, {id: tmpobj.id}, function(data){
+                  var jobj = checkbox.parent().parent().prev();
+                  if(shared){
+                    jobj.find('div.title span:first').after('<span class="item-shareicon">&nbsp;shared&nbsp;</spam>');
+                  }else{
+                    jobj.find('span.item-shareicon').remove();
+                  }
+                  return false;
+                }, 'json');
+            });
+          return false;
         });
       $('div.markstar').off().click(function(){
           markstar($(this), $(this).attr('data'), $(this).hasClass('icon-unstarred'));
@@ -160,7 +204,6 @@ function loadItems(url, since_id, timestamp){
         });
     }, 'json');
 }
-
 
 function markstar(jobj, id, star){
   var url = star?'my/item/star':'my/item/unstar';

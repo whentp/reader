@@ -4,8 +4,10 @@ CREATE TABLE `users`
 (
 	--created by @whentp, using sqlite3
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	openidmd5 VARCHAR(50)
+	openidmd5 VARCHAR(50),
+	name VARCHAR(50)
 );
+CREATE INDEX `user_name_idx` ON `users`(name);
 
 CREATE TABLE `outlines`
 (
@@ -68,6 +70,8 @@ CREATE TABLE `item_statuses`
 	user_id INTEGER,
 	read INTEGER,
 	starred INTEGER,
+	shared INTEGER,
+	timestamp DATETIME,
 	FOREIGN KEY(user_id) REFERENCES users(id),
 	FOREIGN KEY(item_id) REFERENCES items(id)
 );
@@ -75,5 +79,7 @@ CREATE INDEX `item_read_idx` ON `item_statuses`(read);
 CREATE INDEX `item_starred_idx` ON `item_statuses`(starred);
 CREATE INDEX `item_user_id_idx` ON `item_statuses`(user_id);
 CREATE INDEX `item_item_id_idx` ON `item_statuses`(item_id);
+CREATE INDEX `item_item_timestamp_idx` ON `item_statuses`(timestamp);
+CREATE INDEX `item_item_shared_idx` ON `item_statuses`(shared);
 
 

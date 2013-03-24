@@ -3,6 +3,7 @@
 	<div class="item {{if read}}item-read {{/if}}clearfix unbinditem" data="${id}">
 		<div class="title clearfix">
 			<span{{if !read}} class="title-unread"{{/if}}>${title}</span>
+			{{if shared}}<span class="item-shareicon">&nbsp;shared&nbsp;</span>{{/if}}
 			- 
 			<span class="item-abstract"> ${getTitleContent(description)}No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. </span>
 		</div>
@@ -21,16 +22,27 @@
 
 </script>
 
+<script type="text/html" id="item-toolbar">
+	<div class="item item-toolbar" data="${id}">
+		<input type='checkbox' name='unread' data='${id}' /> Mark as UNREAD | 
+		<a href='#' data='${id}'>Test</a> |
+		<input type='checkbox' name='shared' data='${id}' ${shared?'checked':''} /> Share | 
+	</div>
+</script>
+
 <script type="text/html" id="displaycontent">
-	<h2><a href="${link}" target="_blank">${title}</a></h2>
-	<div style='color:#aaa;'>${author}</div>
-	{{html description}}
+	<div class='item-displaycontent clearfix'>
+		<h2><a href="${link}" target="_blank">${title}</a></h2>
+		<div style='color:#aaa;'>${author}</div>
+		{{html description}}
+	</div>
 </script>
 
 <script type="text/html" id="outlines">
 	<ul>
 		<li><a class="feeds all" href="my/items/all" data=""><span class="icon-folder"></span>All items <span class='unread'></span> </a></li>
-		<li><a class="feeds" href="my/items/starred" data=""><span class="icon-folder"></span>Starred items <span class='unread'></span></a></li>
+		<li><a class="feeds" href="my/items/starred" data=""><span class="icon-starred" style='margin: 2px 5px 0 5px;'></span>Starred items <span class='unread'></span></a></li>
+		<li><a class="feeds" href="my/items/shared" data=""><span class="icon-sharelist" style='margin: 2px 5px 0 5px;'></span>Shared items <span class='unread'></span></a></li>
 		<li>&nbsp;</li>
 	</ul>
 	<ul>

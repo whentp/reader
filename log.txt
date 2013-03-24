@@ -1,0 +1,438 @@
+diff --git a/_components.html b/_components.html
+index c855095..92cd02e 100755
+--- a/_components.html
++++ b/_components.html
+@@ -3,6 +3,7 @@
+ 	<div class="item {{if read}}item-read {{/if}}clearfix unbinditem" data="${id}">
+ 		<div class="title clearfix">
+ 			<span{{if !read}} class="title-unread"{{/if}}>${title}</span>
++			{{if shared}}<span class="item-shareicon">&nbsp;shared&nbsp;</span>{{/if}}
+ 			- 
+ 			<span class="item-abstract"> ${getTitleContent(description)}No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. </span>
+ 		</div>
+@@ -21,16 +22,27 @@
+ 
+ </script>
+ 
++<script type="text/html" id="item-toolbar">
++	<div class="item item-toolbar" data="${id}">
++		<input type='checkbox' name='unread' data='${id}' /> Mark as UNREAD | 
++		<a href='#' data='${id}'>Test</a> |
++		<input type='checkbox' name='shared' data='${id}' ${shared?'checked':''} /> Share | 
++	</div>
++</script>
++
+ <script type="text/html" id="displaycontent">
+-	<h2><a href="${link}" target="_blank">${title}</a></h2>
+-	<div style='color:#aaa;'>${author}</div>
+-	{{html description}}
++	<div class='item-displaycontent clearfix'>
++		<h2><a href="${link}" target="_blank">${title}</a></h2>
++		<div style='color:#aaa;'>${author}</div>
++		{{html description}}
++	</div>
+ </script>
+ 
+ <script type="text/html" id="outlines">
+ 	<ul>
+ 		<li><a class="feeds all" href="my/items/all" data=""><span class="icon-folder"></span>All items <span class='unread'></span> </a></li>
+ 		<li><a class="feeds" href="my/items/starred" data=""><span class="icon-folder"></span>Starred items <span class='unread'></span></a></li>
++		<li><a class="feeds" href="my/items/shared" data=""><span class="icon-folder"></span>Shared items <span class='unread'></span></a></li>
+ 		<li>&nbsp;</li>
+ 	</ul>
+ 	<ul>
+diff --git a/changelog.txt b/changelog.txt
+index 5c52399..408188b 100755
+--- a/changelog.txt
++++ b/changelog.txt
+@@ -1,2 +1,9 @@
++12:50 2013/3/24
++improve scroll position
++add item toolbar
++add mark as unread
++add timestamp
++add shared
++
+ 23:02 2013/3/23
+ add author
+\ No newline at end of file
+diff --git a/config.php b/config.php
+index f54593f..c1d15c2 100755
+--- a/config.php
++++ b/config.php
+@@ -2,7 +2,7 @@
+ 
+ // Set default timezone
+ date_default_timezone_set('UTC');
+-ini_set("default_socket_timeout", 10);
++ini_set("default_socket_timeout", 5);
+ ini_set('max_execution_time', 3000);
+ 
+ define('HOSTNAME', 'localhost');
+diff --git a/controller.item.php b/controller.item.php
+index db51b74..839efa5 100755
+--- a/controller.item.php
++++ b/controller.item.php
+@@ -43,6 +43,26 @@ class item{
+ 			))
+ 		));
+ 	}
++	public function setShare(){
++		global $objPOST;
++		echo JSON(array('code'=>
++			setItemShared(array(
++				'item'=>$objPOST->id, 
++				'user'=>getUserId(),
++				'shared'=>1
++			))
++		));
++	}
++	public function setUnshare(){
++		global $objPOST;
++		echo JSON(array('code'=>
++			setItemShared(array(
++				'item'=>$objPOST->id, 
++				'user'=>getUserId(),
++				'shared'=>0
++			))
++		));
++	}
+ 	public function getRead(){
+ 		echo 'hahahaha';
+ 	}
+diff --git a/controller.items.php b/controller.items.php
+index dbb52bc..7ee124b 100755
+--- a/controller.items.php
++++ b/controller.items.php
+@@ -21,7 +21,7 @@ class items{
+ 		$since_id = isset($objGET->since_id)?$objGET->since_id:-1;
+ 		$timestamp = isset($objGET->timestamp)?$objGET->timestamp:-1;
+ 		$outline_id = isset($objGET->outline)?$objGET->outline:-1;
+-		
++
+ 		echo JSON(getItems(array(
+ 			'unread'=>$objGET->unread,
+ 			'feed_id'=>$objGET->id,
+@@ -53,6 +53,17 @@ class items{
+ 			'since_id'=>$since_id
+ 		)));
+ 	}
++	public function getShared(){
++		global $objGET;
++		$since_id = isset($objGET->since_id)?$objGET->since_id:-1;
++		$timestamp = isset($objGET->timestamp)?$objGET->timestamp:-1;
++
++		echo JSON(getItems(array(
++			'timestamp'=>$timestamp,
++			'since_id'=>$since_id,
++			'shared'=>1
++		)));
++	}
+ }
+ 
+ ?>
+diff --git a/database.sql b/database.sql
+index 6fd54e6..b26dae9 100755
+--- a/database.sql
++++ b/database.sql
+@@ -4,8 +4,10 @@ CREATE TABLE `users`
+ (
+ 	--created by @whentp, using sqlite3
+ 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+-	openidmd5 VARCHAR(50)
++	openidmd5 VARCHAR(50),
++	name VARCHAR(50)
+ );
++CREATE INDEX `user_name_idx` ON `users`(name);
+ 
+ CREATE TABLE `outlines`
+ (
+@@ -68,6 +70,8 @@ CREATE TABLE `item_statuses`
+ 	user_id INTEGER,
+ 	read INTEGER,
+ 	starred INTEGER,
++	shared INTEGER,
++	timestamp DATETIME,
+ 	FOREIGN KEY(user_id) REFERENCES users(id),
+ 	FOREIGN KEY(item_id) REFERENCES items(id)
+ );
+@@ -75,5 +79,7 @@ CREATE INDEX `item_read_idx` ON `item_statuses`(read);
+ CREATE INDEX `item_starred_idx` ON `item_statuses`(starred);
+ CREATE INDEX `item_user_id_idx` ON `item_statuses`(user_id);
+ CREATE INDEX `item_item_id_idx` ON `item_statuses`(item_id);
++CREATE INDEX `item_item_timestamp_idx` ON `item_statuses`(timestamp);
++CREATE INDEX `item_item_shared_idx` ON `item_statuses`(shared);
+ 
+ 
+diff --git a/items.php b/items.php
+index 1aeacb1..d9f1b56 100755
+--- a/items.php
++++ b/items.php
+@@ -10,6 +10,7 @@ function getItems($options){
+ 		'user_id'=>getUserId(),
+ 		'unread'=>0,
+ 		'starred'=>0,
++		'shared'=>0,
+ 		'timestamp'=> -1,
+ 		'since_id'=> -1
+ 	);
+@@ -28,6 +29,9 @@ function getItems($options){
+ 	if ($options->starred){
+ 		$whereclause[] = "(t1.starred=1)";
+ 	}
++	if ($options->shared){
++		$whereclause[] = "(t1.shared=1)";
++	}
+ 	if($options->timestamp>0 && $options->since_id>0){
+ 		$timestamp = (int)$options->timestamp;
+ 		$since_id = (int)$options->since_id;
+@@ -60,7 +64,7 @@ function getItems($options){
+ sqlend;*/
+ 
+ 	$sql =<<<sqlend
+-		SELECT items.id, items.title, items.link, items.pubDate, items.author, items.description, items.feed_id, ((t2.read_until_id >= items.id AND t1.read IS NULL) OR t1.read) AS read, t1.starred FROM items 
++		SELECT items.id, items.title, items.link, items.pubDate, items.author, items.description, items.feed_id, t1.shared, ((t2.read_until_id >= items.id AND t1.read IS NULL) OR t1.read) AS read, t1.starred FROM items 
+ 			INNER JOIN feed_statuses AS t2 ON items.feed_id = t2.feed_id AND t2.user_id = $user_id $outline_option
+ 			LEFT JOIN item_statuses AS t1 ON t1.item_id = items.id AND t1.user_id = $user_id
+ 			$whereclause
+@@ -101,13 +105,13 @@ function setItemRead($options){
+ 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+ 	$conn->execute(array(':item'=>$item, ':user'=>$user));
+ 	if(count($conn->fetchAll()) == 0){
+-		$sql = 'INSERT INTO item_statuses(item_id, user_id, read) VALUES(:item, :user, :read);';
++		$sql = 'INSERT INTO item_statuses(item_id, user_id, read, timestamp) VALUES(:item, :user, :read, :timestamp);';
+ 
+ 	}else{
+-		$sql = 'UPDATE item_statuses SET read=:read WHERE item_id=:item AND user_id=:user;';
++		$sql = 'UPDATE item_statuses SET read=:read, timestamp=:timestamp WHERE item_id=:item AND user_id=:user;';
+ 	}
+ 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+-	$conn->execute(array(':item'=>$item, ':user'=>$user, ':read'=>$options->read));
++	$conn->execute(array(':item'=>$item, ':user'=>$user, ':read'=>$options->read, ':timestamp'=>time()));
+ 
+ 	$sql =<<<sqlend
+ 
+@@ -148,13 +152,42 @@ function setItemStarred($options){
+ 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+ 	$conn->execute(array(':item'=>$item, ':user'=>$user));
+ 	if(count($conn->fetchAll()) == 0){
+-		$sql = 'INSERT INTO item_statuses(item_id, user_id, starred) VALUES(:item, :user, :starred);';
++		$sql = 'INSERT INTO item_statuses(item_id, user_id, starred, timestamp) VALUES(:item, :user, :starred, :timestamp);';
++
++	}else{
++		$sql = 'UPDATE item_statuses SET starred=:starred, timestamp=:timestamp WHERE item_id=:item AND user_id=:user;';
++	}
++	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
++	$conn->execute(array(':item'=>$item, ':user'=>$user, ':starred'=>$options->starred, ':timestamp'=>time()));
++	return true;
++}
++
++function setItemShared($options){
++	global $db;
++	$default_options = array(
++		'item'=>-1,
++		'user'=>-1,
++		'shared'=>1
++	);
++	$options = merge_options($default_options, $options);
++
++	if(!is_numeric($options->user) || $options->user < 0 || !is_numeric($options->item) || $options->item < 0){
++		return false;
++	}
++	$item = $options->item;
++	$user = $options->user;
++
++	$sql = 'SELECT id FROM item_statuses WHERE item_id=:item AND user_id=:user;';
++	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
++	$conn->execute(array(':item'=>$item, ':user'=>$user));
++	if(count($conn->fetchAll()) == 0){
++		$sql = 'INSERT INTO item_statuses(item_id, user_id, shared, timestamp) VALUES(:item, :user, :shared, :timestamp);';
+ 
+ 	}else{
+-		$sql = 'UPDATE item_statuses SET starred=:starred WHERE item_id=:item AND user_id=:user;';
++		$sql = 'UPDATE item_statuses SET shared=:shared, timestamp=:timestamp WHERE item_id=:item AND user_id=:user;';
+ 	}
+ 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+-	$conn->execute(array(':item'=>$item, ':user'=>$user, ':starred'=>$options->starred));
++	$conn->execute(array(':item'=>$item, ':user'=>$user, ':shared'=>$options->shared, ':timestamp'=>time()));
+ 	return true;
+ }
+ 
+diff --git a/media/style.css b/media/style.css
+index 46668c9..ec7f744 100755
+--- a/media/style.css
++++ b/media/style.css
+@@ -32,8 +32,7 @@ ol, ul {
+ blockquote, q {
+ 	quotes: none;
+ }
+-blockquote:before, blockquote:after,
+-q:before, q:after {
++blockquote:before, blockquote:after, q:before, q:after {
+ 	content: '';
+ 	content: none;
+ }
+@@ -75,6 +74,7 @@ body{
+ 	float: left;
+ 	width:200px;
+ 	overflow-y: scroll;
++	overflow-x: hidden;
+ }
+ 
+ #split{
+@@ -99,6 +99,7 @@ body{
+ 	display:block;
+ 	height: 20px;
+ 	overflow-y: scroll;
++	overflow-x: hidden;
+ }
+ 
+ .item{
+@@ -127,6 +128,14 @@ body{
+ 	overflow: hidden;
+ }
+ 
++.item-shareicon{
++	color: #fff;
++	font-family: tahoma;
++	background: #3366bb;
++	font-weight: normal;
++	border: 1px solid #224466;
++}
++
+ .item-right{
+ 	float: left;
+ 	width: 160px; /*Width of right column*/
+@@ -278,11 +287,17 @@ span.unread{
+ .item-content{
+ 	width: 100%;
+ 	display: block;
+-	float: left;
++	float: left;	
++	border-left: 1px solid #2266ee;
++}
++
++.item-displaycontent{
++	width: 100%;
++	display: block;
++	float: left;	
+ 	padding: 1em;
+ 	line-height: 1.5em;
+ 	max-width:600px;
+-	border-left: 1px solid #2266ee;
+ }
+ 
+ .item-content p{
+@@ -316,11 +331,20 @@ span.unread{
+ }
+ 
+ #bottom-loader{
+-background: no-repeat 50% 50% url(loader.gif) rgba(0, 0, 0, 0.2);
+-display: none;
+-height: 30px;
+-line-height: 18px;
+-position: absolute;
+-width: 80px;
+-z-index: 1000;
++	background: no-repeat 50% 50% url(loader.gif) rgba(0, 0, 0, 0.2);
++	display: none;
++	height: 30px;
++	line-height: 18px;
++	position: absolute;
++	width: 80px;
++	z-index: 1000;
++}
++
++.item-toolbar{
++	border-top: 1px solid #ddd;
++	border-bottom: 1px solid #ddd;
++}
++.item-toolbar a{
++	height:20px;
++	line-height:20px;
+ }
+diff --git a/readme.txt b/readme.txt
+index a67a65b..67b59d5 100755
+--- a/readme.txt
++++ b/readme.txt
+@@ -7,6 +7,7 @@ how to set up a reader environment
+ 5. login with your google openid.
+ 6. browse and see an ugly interface. add some feeds and run cron.fetchfeed.php then the ui will be fine.
+ 
++
+ how to subscribe a feed
+ 
+ create an OPML file then copy & paste to import box,
+@@ -17,4 +18,4 @@ how to complain this simple reader
+ 
+ 1. blablabla > /dev/null .
+ 2. complain @whentp is lazy.
+-3. contribute your codes.
+\ No newline at end of file
++3. contribute your codes.
+diff --git a/view.js b/view.js
+index 6e71ec2..24b9386 100755
+--- a/view.js
++++ b/view.js
+@@ -151,8 +151,52 @@ function loadItems(url, since_id, timestamp){
+           $('.item-reading').removeClass('item-reading');
+           $('div.item-content').empty().addClass('hidediv');
+           $(this).addClass('item-reading');
++
++          // Scroll to the top
++          var child = $(this);
++          var parent = child.parent();
++          parent.scrollTop(parent.scrollTop() + child.position().top - parent.position().top);
++
+           var content = $(this).next();
+-          content.removeClass('hidediv').empty().append($('#displaycontent').tmpl(tmpobj));
++          content.removeClass('hidediv').empty()
++          .append($('#displaycontent').tmpl(tmpobj))
++          .append($('#item-toolbar').tmpl(tmpobj));
++
++          $('div.item-toolbar').find('input[name=unread]').click(function(){
++              var tmpobj = cache.items[$(this).attr('data')];
++              var checkbox = $(this);
++              var unread = checkbox.is(':checked');
++              var url = unread ?'my/item/unread':'my/item/read';
++              $.post(url, {id: tmpobj.id}, function(data){
++                  getUnreadCount();
++                  var jobj = checkbox.parent().parent().prev();
++                  if(unread){
++                    jobj.find('div.title span:first').addClass('title-unread');
++                    jobj.removeClass('item-read');
++                  }else{
++                    jobj.addClass('item-read');
++                    jobj.find('span.title-unread').removeClass('title-unread');
++                  }
++                }, 'json');
++            });
++
++          $('div.item-toolbar').find('input[name=shared]').click(function(){
++              var tmpobj = cache.items[$(this).attr('data')];
++              var checkbox = $(this);
++              var shared = checkbox.is(':checked');
++              console.log(shared);
++              var url = shared ?'my/item/share':'my/item/unshare';
++              $.post(url, {id: tmpobj.id}, function(data){
++                  var jobj = checkbox.parent().parent().prev();
++                  if(shared){
++                    jobj.find('div.title span:first').after('<span class="item-shareicon">&nbsp;shared&nbsp;</spam>');
++                  }else{
++                    jobj.find('span.item-shareicon').remove();
++                  }
++                  return false;
++                }, 'json');
++            });
++          return false;
+         });
+       $('div.markstar').off().click(function(){
+           markstar($(this), $(this).attr('data'), $(this).hasClass('icon-unstarred'));
+@@ -161,7 +205,6 @@ function loadItems(url, since_id, timestamp){
+     }, 'json');
+ }
+ 
+-
+ function markstar(jobj, id, star){
+   var url = star?'my/item/star':'my/item/unstar';
+   $.post(url, {'id': id}, function(data){
