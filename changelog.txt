@@ -1,10 +1,15 @@
+21:03 2013/3/24
+can reorder
+can subscribe new rss
+categories can be folded.
+
 12:50 2013/3/24
 improve scroll position
 add item toolbar
 add mark as unread
 add timestamp
 add shared
-change icon
+change icons
 
 23:02 2013/3/23
 add author

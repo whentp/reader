@@ -17,10 +17,11 @@ function getFeeds($options){
 	}
 
 	$sql =<<<sqlend
-	SELECT fs.id, fs.feed_id, fs.outline_id, feeds.title, feeds.link, outlines.title AS outline FROM feed_statuses AS fs
+	SELECT fs.id, fs.feed_id, fs.outline_id, feeds.title, feeds.link, outlines.title AS outline, outlines.folded FROM feed_statuses AS fs
 		LEFT JOIN feeds ON fs.feed_id = feeds.id
 		LEFT JOIN outlines ON fs.outline_id = outlines.id
 		WHERE fs.user_id = :user $outline_option
+		ORDER BY outlines.order_index, outlines.id, fs.order_index, fs.id
 sqlend;
 
 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -118,3 +119,35 @@ sqlend;
 	return $result;
 }
 
+function updateFeedOrder($fromfeed, $tofeed, $fromoutline,$tooutline, $user_id){
+	executeSql('UPDATE feed_statuses SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
+	executeSql('UPDATE outlines SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
+	if($fromfeed != $tofeed && $fromoutline == $tooutline){
+		$order_index = getIdIfExists('SELECT order_index FROM feed_statuses WHERE id=:id', array(':id' => $fromfeed), 'order_index');
+		executeSql('UPDATE feed_statuses SET order_index = (SELECT order_index FROM feed_statuses WHERE id=:toid) WHERE id=:fromid',
+			array(':fromid'=>$fromfeed,
+			':toid'=>$tofeed
+		));
+		executeSql('UPDATE feed_statuses SET order_index = :order_index WHERE id=:toid',
+			array(':order_index'=>$order_index,
+			':toid'=>$tofeed
+		));
+	}
+	else if($fromfeed == -1 && $tofeed == -1 && $fromoutline != $tooutline){
+		$order_index = getIdIfExists('SELECT order_index FROM outlines WHERE id=:id', array(':id' => $fromoutline), 'order_index');
+		executeSql('UPDATE outlines SET order_index = (SELECT order_index FROM outlines WHERE id=:toid) WHERE id=:fromid',
+			array(':fromid'=>$fromoutline,
+			':toid'=>$tooutline
+		));
+		executeSql('UPDATE outlines SET order_index = :order_index WHERE id=:toid',
+			array(':order_index'=>$order_index,
+			':toid'=>$tooutline
+		));
+	}
+	else if($fromfeed > -1 && $fromoutline != $tooutline){
+		executeSql('UPDATE feed_statuses SET outline_id = :outline_id WHERE id=:fromfeed',
+			array(':outline_id'=>$tooutline,
+			':fromfeed'=>$fromfeed
+		));
+	}
+}

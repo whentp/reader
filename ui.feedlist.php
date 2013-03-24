@@ -18,6 +18,7 @@ if (getUserId() <= 0){
 	<body>
 
 		<div id="banner">
+			<a class='add-feed' href="my/outlines/add-feed">Subscribe</a> | 
 			<a href="ui.import.opml.php">Import</a> | 
 			<a href="ui.logout.php">logout</a>
 		</div>

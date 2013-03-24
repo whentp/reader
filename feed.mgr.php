@@ -27,7 +27,7 @@ function outlineExists($title, $text, $user_id){
 }
 
 function outlineAdd($title='', $text='', $user_id=''){
-	if (($outline_id = feedExists($title)) !== false){
+	if (($outline_id = outlineExists($title, $text, $user_id)) !== false){
 		return $outline_id;
 	}
 	return getIdByInsert('outlines', array(
@@ -40,9 +40,9 @@ function outlineAdd($title='', $text='', $user_id=''){
 function feedStatusExists($feed_id, $outline_id, $user_id){
 	return getIdIfExists(
 		'SELECT id FROM feed_statuses WHERE feed_id = :feed_id AND outline_id = :outline_id AND user_id = :user_id LIMIT 1', array(
-			':feed_id' => $feed_id,
-			':outline_id' => $outline_id,
-			':user_id' => $user_id
+			':feed_id' => (int)$feed_id,
+			':outline_id' => (int)$outline_id,
+			':user_id' => (int)$user_id
 		), 'id');
 }
 
@@ -58,7 +58,6 @@ function feedStatusAdd($feed_id, $outline_id, $user_id){
 function loadFromGoogleReaderFiles($filename, $user_id){
 	$txt = file_get_contents($filename);
 	importFromOpmlText($txt, $user_id);
-
 }
 
 function importFromOpmlText($text, $user_id){
@@ -95,6 +94,38 @@ function importFromGoogleReader($filename){
 	if(getUserId() && getUserId() > 0){
 		loadFromGoogleReaderFiles($filename, getUserId());
 		return true;
+	}
+	return false;
+}
+
+function importSingleRss($url, $user_id){
+	require_once 'autoloader.php';
+	try {
+		$feed = new SimplePie();
+		$feed->set_feed_url($url);
+		$feed->force_feed(true);
+		$success = $feed->init();
+		if ($success){
+			$title = $feed->get_title();
+			$opml =<<<opmlend
+	<?xml version="1.0" encoding="UTF-8"?>
+	<opml version="1.0">
+	<head>
+	<title>whentp import</title>
+	</head>
+	<body>
+	<outline title="Uncategorized" text="Uncategorized">
+	<outline text="$title" title="$title" type="rss" xmlUrl="$url" />
+	</outline>
+	</body>
+	</opml>
+opmlend;
+			importFromOpmlText(trim($opml), $user_id);
+			return true;
+		}
+	}
+	catch(Exception $e){
+		return false;
 	}
 	return false;
 }

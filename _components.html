@@ -46,12 +46,12 @@
 		<li>&nbsp;</li>
 	</ul>
 	<ul>
-		{{each(k, v) obj}}
+		{{each(k, v) outlinelist}}
 		<li>
-		<a class="feeds" href="my/items/feeds?id=${v.id}" data="${v.id}"><span class="icon-folder"></span>${k} <span class='unread'></span></a>
-		<ul>
-			{{each(i,item) v.items}}
-			<li><a class="feed" href="my/items/feed?id=${item.feed_id}&outline_id=${v.id}" data="${item.feed_id}"><img src='media/gif.gif' /> ${item.title} <span class='unread'></span></a></li>
+		<a class="feeds draggable" href="my/items/feeds?id=${v.id}" data="${v.id}"><span class="icon-folder"></span>${v.title} <span class='unread'></span></a>
+		<ul class='${(v.folded==1)?'hidediv':''}'>
+			{{each(i,item) obj[v.title].items}}
+			<li><a class="feed draggable" href="my/items/feed?id=${item.feed_id}&outline_id=${v.id}" outline="${v.id}" data="${item.feed_id}"><img src='media/gif.gif' /> ${item.title} <span class='unread'></span></a></li>
 			{{/each}}
 		</ul>
 		</li>

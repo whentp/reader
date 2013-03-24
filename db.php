@@ -35,3 +35,9 @@ function getIdByInsert($tableName, $valueitems){
 	$conn->execute($binddata);
 	return (int) $db->lastInsertId();
 }
+
+function executeSql($sql, $binddata = array()){
+	global $db;
+	$conn = $db->prepare($sql);
+	$conn->execute($binddata);
+}

@@ -11,7 +11,8 @@ how to set up a reader environment
 how to subscribe a feed
 
 create an OPML file then copy & paste to import box,
-or copy & paste existing OPML files to import box. 
+or copy & paste existing OPML files to import box,
+or click ``subscribe'' on the top.
 
 
 how to complain this simple reader

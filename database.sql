@@ -17,6 +17,7 @@ CREATE TABLE `outlines`
 	title VARCHAR(50),
 	user_id INTEGER,
 	order_index INTEGER,
+	folded INTEGER,
 	FOREIGN KEY(user_id) REFERENCES users(id)
 );
 

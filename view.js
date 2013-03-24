@@ -83,10 +83,17 @@ function getUnreadCount(){
 function getFeedList(){
   $.get('my/outlines/all', {}, function(data){
       var outlineGroup = {};
+      var outlineList = [];
       $.each(data, function(a, b){
           var k = b.outline;
           cache.outlineTitle[b.feed_id] = b.title;
           if(!outlineGroup[k]){
+            if(b.folded)console.log(b.folded);
+            outlineList.push({
+                title: k,
+                id: b.outline_id,
+                folded: b.folded
+              });
             outlineGroup[k]={
               title: k,
               id: b.outline_id,
@@ -95,9 +102,16 @@ function getFeedList(){
           }
           outlineGroup[k].items.push(b);
         });
-      $('div#nav').html($('#outlines').tmpl({obj:outlineGroup}));
+      $('div#nav').html($('#outlines').tmpl({outlinelist: outlineList, obj:outlineGroup}));
       getUnreadCount();
 
+      $('span.icon-folder').off().click(function(){
+          $(this).parent().next().toggleClass('hidediv');
+          var id = $(this).parent().attr('data');
+          var folded = $(this).parent().next().hasClass('hidediv')?1:0;
+          $.post('my/outlines/fold', {'id': id , 'folded': folded});
+          return false;
+        });
       $('a.feeds, a.feed').off().click(function(){
           $('a.selected').removeClass('selected');
           $(this).addClass('selected');
@@ -105,6 +119,7 @@ function getFeedList(){
           loadItems(url, -1, -1);
           return false;
         });
+      bindDrag();
     }, 'json');
 }
 
@@ -184,7 +199,6 @@ function loadItems(url, since_id, timestamp){
               var tmpobj = cache.items[$(this).attr('data')];
               var checkbox = $(this);
               var shared = checkbox.is(':checked');
-              console.log(shared);
               var url = shared ?'my/item/share':'my/item/unshare';
               $.post(url, {id: tmpobj.id}, function(data){
                   var jobj = checkbox.parent().parent().prev();
@@ -241,6 +255,65 @@ function showBottomLoader(show) {
   }
 }
 
+function bindDrag(){
+  $('#nav a.draggable').attr('draggable', 'true')
+  .on('dragstart', function(ev) {
+      feedDragStart(ev, $(this));
+    })
+  .on('dragend', function(ev) {
+      return false;
+    })
+  .on('dragenter', function(ev) {
+      $(ev.target).addClass('dragover');
+      return false
+    })
+  .on('dragleave', function(ev) {
+      $(ev.target).removeClass('dragover');
+      return false;
+    })
+  .on('dragover', function(ev) {
+      return false;
+    })
+  .on('drop', function(ev) {
+      var obj = $(this);
+      var dt = ev.originalEvent.dataTransfer;
+      var tmp = JSON.parse(dt.getData('text/plain'));
+      var data = {type: obj.hasClass('feeds')?1:0};
+      data.feed = (data.type == 1)? -1 : obj.attr('data');
+      data.outline = (data.type == 1)?obj.attr('data'):obj.attr('outline');
+
+      $(ev.target).removeClass('dragover');
+      if(tmp.type > data.type){
+        alert('Sorry. category cannot be put into an item.');
+      } else {
+        data = {
+          fromOutline: tmp.outline,
+          toOutline: data.outline,
+          fromFeed: tmp.feed,
+          toFeed: data.feed
+        };
+        console.log(data);
+        $.post('my/outlines/order', data, function(data){
+            getFeedList();
+          }, 'json');
+      }
+      return false;
+    });
+}
+
+function returnFalse(){
+  return false;
+}
+
+function feedDragStart(ev, obj){
+  var dt = ev.originalEvent.dataTransfer;
+  var data = {type: obj.hasClass('feeds')?1:0};
+  data.feed = (data.type == 1)? -1 : obj.attr('data');
+  data.outline = (data.type == 1)?obj.attr('data'):obj.attr('outline');
+  dt.setData("text/plain", JSON.stringify(data));
+  return true;
+}
+
 
 function init(){
   resize();
@@ -250,6 +323,21 @@ function init(){
     })
   .ajaxStop(function() {
       showBottomLoader(false);
+    });
+
+  $('a.add-feed').click(function(){
+      var url = prompt('Enter the RSS address:');
+      if(url){
+        $.post('my/outlines/add-feed', {'url':url}, function(data){
+            if(data.code){
+              getFeedList();
+              alert('OK.');
+            } else {
+              alert('Failed');
+            }
+          },'json');
+      }
+      return false;
     });
 
   $('#refresh').click(getUnreadCount);
