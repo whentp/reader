@@ -16,6 +16,7 @@ CREATE TABLE `outlines`
 	text VARCHAR(50),
 	title VARCHAR(50),
 	user_id INTEGER,
+	order_index INTEGER,
 	FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
@@ -39,8 +40,9 @@ CREATE TABLE `feed_statuses`
 	user_id INTEGER,
 	read INTEGER,
 	read_until_id INTEGER,
+	order_index INTEGER,
 	FOREIGN KEY(user_id) REFERENCES users(id),
-	FOREIGN KEY(outline_id) REFERENCES outlines(id)
+	FOREIGN KEY(outline_id) REFERENCES outlines(id),
 	FOREIGN KEY(feed_id) REFERENCES feeds(id)
 );
 
