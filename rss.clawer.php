@@ -48,6 +48,7 @@ function fetchFeedItems($url, $url_id){
 		$feed = new SimplePie();
 		$feed->set_feed_url($url);
 		$feed->force_feed(true);
+		$feed->set_timeout(10);
 		$success = $feed->init();
 
 		$feed->handle_content_type();
