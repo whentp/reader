@@ -10,6 +10,7 @@ die('<a href="ui.openid.google.php">Login</a> First');
 	<head>
 		<meta charset="UTF-8">
 		<title>Reader</title>
+		<link rel='icon' href='media/fav.png' type='image/png' />
 		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="view.js"></script>
