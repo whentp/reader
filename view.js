@@ -88,7 +88,6 @@ function getFeedList(){
           var k = b.outline;
           cache.outlineTitle[b.feed_id] = b.title;
           if(!outlineGroup[k]){
-            if(b.folded)console.log(b.folded);
             outlineList.push({
                 title: k,
                 id: b.outline_id,
@@ -293,7 +292,7 @@ function bindDrag(){
           fromFeed: tmp.feed,
           toFeed: data.feed
         };
-        console.log(data);
+        //console.log(data);
         $.post('my/outlines/order', data, function(data){
             getFeedList();
           }, 'json');
@@ -350,10 +349,13 @@ function init(){
         var jobj = $('a.selected');
         var url = jobj.attr('href');
         var id = $('div.item:last').attr('data');
-        loadItems(url, id, cache.items[id].pubDate);
+        if(!id || !cache.items[id]){  
+          loadItems(url, -1, -1);
+        } else {
+          loadItems(url, id, cache.items[id].pubDate);
+        }
       }
     }).scrollTop(0);
-
   $(window).resize(resize);
   getFeedList();
 }

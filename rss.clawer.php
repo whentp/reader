@@ -67,6 +67,14 @@ function fetchFeedItems($url, $url_id){
 				'when_fetch' => $when_fetch
 			));
 
+			$utf8content = $post->description;
+			try{
+				$utf8content = html_entity_decode($post->description, ENT_QUOTES, "utf-8");
+			} catch (Exception $ee){
+				$utf8content = $post->description;
+			}
+			$post->description = $utf8content;
+			
 			if($tmp = $item->get_author()){
 				$post->author = $tmp->get_name();
 			}

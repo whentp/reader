@@ -17,11 +17,11 @@ function checkSafe(){
 
 // in an include used on every page load:
 if (get_magic_quotes_gpc()) {
-    foreach (array('_GET', '_POST', '_COOKIE', '_REQUEST') as $src) {
-        foreach ($$src as $key => $val) {
-            $$src[$key] = stripslashes($val);
-        }
-    }
+	foreach (array('_GET', '_POST', '_COOKIE', '_REQUEST') as $src) {
+		foreach ($$src as $key => $val) {
+			$$src[$key] = stripslashes($val);
+		}
+	}
 }
 
 function arrayRecursive(&$array, $function, $apply_to_keys_also = false){
@@ -42,7 +42,9 @@ function arrayRecursive(&$array, $function, $apply_to_keys_also = false){
 	}
 }
 
+
 function object_to_array($obj) {
+	$arr = array();
 	$arrObj = is_object($obj) ? get_object_vars($obj) : $obj;
 	foreach ($arrObj as $key => $val) {
 		$val = (is_array($val) || is_object($val)) ? object_to_array($val) : $val;
@@ -52,9 +54,10 @@ function object_to_array($obj) {
 }
 
 function JSON($obj) {
-	return json_encode($obj);
+	$str = json_encode($obj);
+	//return $str;
+	return preg_replace("#\\\u([0-9a-f]+)#ie", "iconv('UCS-2', 'UTF-8', pack('H4', '\\1'))", $str);
 }
-
 
 function merge_options($default, $to){
 	$default = (object)$default;

@@ -1,4 +1,6 @@
 <?php
+// set on to open output_compression.
+ini_set("zlib.output_compression", "Off");
 
 // Set default timezone
 date_default_timezone_set('UTC');

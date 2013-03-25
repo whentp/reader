@@ -8,6 +8,12 @@ $objPOST = (object)$_POST;
 $controller = $objGET->c;
 $action = $objGET->a;
 
+function header_json(){
+	if(!headers_sent()){
+		header('Content-Type: application/json; charset=utf-8', true,200);
+	}
+}
+
 require_once 'controller.'.$controller.'.php';
 
 $tmp = new $controller();
