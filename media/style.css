@@ -66,7 +66,54 @@ body{
 
 #banner{
 	height: 32px;
-	background:#999;
+	background:#fff;
+	border-bottom: 1px solid #eee;
+	font-family: Consolas, 'Liberation Mono', Courier, monospace;
+}
+
+div.buttons{
+	height: 20px;
+	line-height: 20px;
+	display: block;
+	float: left;
+	margin:4px;
+}
+
+div.buttons a{
+	-wekkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	border: solid 1px rgb(229, 229, 229);
+	height: 14px;
+	line-height 14px;
+	margin: 1px 0 0 1px;
+	padding: 3px 5px;
+	text-decoration: none;
+	font-family: tahoma;
+	color: rgb(0, 0, 0);
+
+}
+
+#logo{
+	display: block;
+	float: left;
+	margin:4px;
+}
+
+#logo a.hostedat{
+	font-size: 17px;
+	font-weight: bold;
+	color:#000;
+	text-decoration: none;
+}
+
+#logo a, #logo{
+	font-weight: normal;
+	color:#ccc;
+}
+
+#logo a:first-letter {
+	color:#e00;
 }
 
 #nav{

@@ -3,7 +3,7 @@
 require_once 'common.php';
 
 if (getUserId() <= 0){
-	die('<a href="ui.openid.google.php">Login</a> First');
+die('<a href="ui.openid.google.php">Login</a> First');
 }
 ?><!DOCTYPE HTML>
 <html lang="en">
@@ -16,15 +16,17 @@ if (getUserId() <= 0){
 		<link rel="stylesheet" href="media/style.css" />
 	</head>
 	<body>
-
 		<div id="banner">
-			<a class='add-feed' href="my/outlines/add-feed">Subscribe</a> | 
-			<a href="ui.import.opml.php">Import</a> | 
-			<a href="https://github.com/whentp/reader/issues" target='_blank'>Report Bugs</a> | 
-			<a href="ui.logout.php">logout</a>
+			<div id='logo'><a href='https://github.com/whentp/reader/issues' target='_blank' class='hostedat'>Reader</a> </div>
+			<div class='buttons clearfix'>
+				<a class='add-feed' href="my/outlines/add-feed">Subscribe</a>
+				<a href="ui.import.opml.php">Import</a>
+				<a href="https://github.com/whentp/reader/issues" target='_blank'>Report Bugs</a> 
+				<a href="ui.logout.php">Logout</a>
+			</div>		
 		</div>
 		<div id="framework">
-			<div id="nav">zz</div>
+			<div id="nav">&nbsp;</div>
 			<div id="split"></div>
 			<div id="main">
 				<div id="toolbar">

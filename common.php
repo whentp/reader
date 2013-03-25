@@ -55,8 +55,8 @@ function object_to_array($obj) {
 
 function JSON($obj) {
 	$str = json_encode($obj);
-	//return $str;
-	return preg_replace("#\\\u([0-9a-f]+)#ie", "iconv('UCS-2', 'UTF-8', pack('H4', '\\1'))", $str);
+	return $str;
+	//return preg_replace("#\\\u([0-9a-f]+)#ie", "iconv('UCS-2', 'UTF-8', pack('H4', '\\1'))", $str);
 }
 
 function merge_options($default, $to){
