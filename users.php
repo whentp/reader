@@ -44,5 +44,28 @@ function setUserMd5($md5){
 function logoutOpenId(){
 	$_SESSION['usermd5'] = '';
 	unset($_SESSION['usermd5']);
-
 }
+
+function getUserIdByName($username){
+	return getIdIfExists('SELECT id FROM users WHERE name=:username', array(':username'=>$username), 'id');
+}
+
+function getUserNameById($id){
+	global $db;
+
+	$sql = 'SELECT id, name FROM users WHERE id=:id';
+	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$conn->execute(array(':id' => $id));
+	$rs = $conn->fetchAll();
+
+	foreach($rs as $a){
+		return $a['name'];
+	}
+	return false;
+}
+
+function getCurrentUserUrl(){
+	$tmp = getCurrentUrl();
+	return substr($tmp, 0, strrpos($tmp, "/"));
+}
+

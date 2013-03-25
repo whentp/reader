@@ -236,6 +236,26 @@ function resize(){
   $('#list, #toolbar').width($(window).width() - $('#split').width() - $('#nav').width());
 }
 
+function changeUserName(){
+  $.get('my/user/user-name', function(data){
+    if(data.code){
+      var username = data.username;
+      var newname = prompt('Enter your new name', username);
+      if(newname.length){
+        $.post('my/user/user-name', {'username': newname}, function(data){
+          if(data.code){
+            alert('Successful');
+            window.location.reload();
+          } else {
+            alert('Sorry. Name Invalid.')
+          }
+        }, 'json');
+      }
+    }
+  }, 'json');
+  return false;
+}
+
 function showBottomLoader(show) {
   if(!$('#bottom-loader').size()){
     $('<div id="bottom-loader" style="display: none;"></div>').appendTo($('body'));
@@ -339,6 +359,8 @@ function init(){
       }
       return false;
     });
+
+  $('a.user-name').click(changeUserName);
 
   $('#refresh').click(getUnreadCount);
   $('#markread').click(markasread);

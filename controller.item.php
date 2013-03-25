@@ -4,6 +4,7 @@ require_once 'common.php';
 
 class item{
 	public function setRead(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		echo JSON(array('code'=>
 			setItemRead(array(
@@ -13,6 +14,7 @@ class item{
 		));	
 	}
 	public function setUnread(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		echo JSON(array('code'=>
 			setItemRead(array(
@@ -24,6 +26,7 @@ class item{
 
 	}
 	public function setStar(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		echo JSON(array('code'=>
 			setItemStarred(array(
@@ -34,6 +37,7 @@ class item{
 		));
 	}
 	public function setUnstar(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		echo JSON(array('code'=>
 			setItemStarred(array(
@@ -44,6 +48,7 @@ class item{
 		));
 	}
 	public function setShare(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		echo JSON(array('code'=>
 			setItemShared(array(
@@ -54,6 +59,7 @@ class item{
 		));
 	}
 	public function setUnshare(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		echo JSON(array('code'=>
 			setItemShared(array(
@@ -64,7 +70,7 @@ class item{
 		));
 	}
 	public function getRead(){
-		echo 'hahahaha';
+		echo 'Test';
 	}
 }
 

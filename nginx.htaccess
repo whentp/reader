@@ -1,0 +1,10 @@
+# nginx configuration, generated at http://winginx.com/htaccess
+
+location /my {
+	rewrite ^/my/([^/\.]+)/([^/\.]+)$ /sys.controller.php?c=$1&a=$2 break;
+}
+
+location /user {
+	rewrite ^/user/([^/\.]+)/([^/\.]+)$ /sys.controller.php?c=user&a=$2&username=$1 break;
+}
+

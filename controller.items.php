@@ -4,6 +4,7 @@ require_once 'common.php';
 
 class items{
 	public function getAll(){
+		exitJsonIfNotLogin();
 		global $objGET;
 		$since_id = isset($objGET->since_id)?$objGET->since_id:-1;
 		$timestamp = isset($objGET->timestamp)?$objGET->timestamp:-1;
@@ -16,6 +17,7 @@ class items{
 		)));
 	}
 	public function getFeed(){
+		exitJsonIfNotLogin();
 		global $objGET;
 
 		$since_id = isset($objGET->since_id)?$objGET->since_id:-1;
@@ -32,6 +34,7 @@ class items{
 		)));
 	}
 	public function getFeeds(){
+		exitJsonIfNotLogin();
 		global $objGET;
 		$since_id = isset($objGET->since_id)?$objGET->since_id:-1;
 		$timestamp = isset($objGET->timestamp)?$objGET->timestamp:-1;
@@ -45,6 +48,7 @@ class items{
 		)));
 	}
 	public function getStarred(){
+		exitJsonIfNotLogin();
 		global $objGET;
 		$since_id = isset($objGET->since_id)?$objGET->since_id:-1;
 		$timestamp = isset($objGET->timestamp)?$objGET->timestamp:-1;
@@ -57,6 +61,7 @@ class items{
 		)));
 	}
 	public function getShared(){
+		exitJsonIfNotLogin();
 		global $objGET;
 		$since_id = isset($objGET->since_id)?$objGET->since_id:-1;
 		$timestamp = isset($objGET->timestamp)?$objGET->timestamp:-1;

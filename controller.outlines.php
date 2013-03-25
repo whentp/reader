@@ -4,12 +4,14 @@ require_once 'common.php';
 
 class outlines{
 	public function getAll(){
+		exitJsonIfNotLogin();
 		echo JSON(getFeeds(array('user'=>getUserId())));
 	}
 	public function getUnreadCount(){
 		echo JSON(getFeedUnreadCount(array('user'=>getUserId())));
 	}
 	public function setFeedRead(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		markFeedRead(array(
 			'user'=>getUserId(),
@@ -19,6 +21,7 @@ class outlines{
 		echo JSON($objPOST);
 	}	
 	public function setFeedsRead(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		markFeedRead(array(
 			'user'=>getUserId(),
@@ -28,6 +31,7 @@ class outlines{
 		echo JSON($objPOST);
 	}
 	public function setOrder(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		updateFeedOrder(
 			(int)$objPOST->fromFeed,
@@ -39,6 +43,7 @@ class outlines{
 		echo JSON(array('code'=>true));
 	}
 	public function setFold(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		$id = (int)$objPOST->id;
 		$folded = (int)$objPOST->folded?1:0;
@@ -48,6 +53,7 @@ class outlines{
 	}
 
 	public function setAddFeed(){
+		exitJsonIfNotLogin();
 		global $objPOST;
 		$url = $objPOST->url;
 		require 'feed.mgr.php';

@@ -7,7 +7,7 @@ require_once 'feed.mgr.php';
 function feedList($conditions=''){
 	global $db;
 
-	$sql = 'SELECT id,title,link,failedtime FROM feeds WHERE timestamp<=:timestamp ORDER BY failedtime, timestamp';
+	$sql = 'SELECT id,title,link,failedtime FROM feeds WHERE timestamp<=:timestamp OR timestamp IS NULL ORDER BY failedtime, timestamp';
 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	$conn->execute(array(':timestamp'=>time() - MINFETCHINTERVAL));
 	$rs = $conn->fetchAll();

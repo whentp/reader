@@ -55,8 +55,8 @@ function object_to_array($obj) {
 
 function JSON($obj) {
 	$str = json_encode($obj);
-	return $str;
-	//return preg_replace("#\\\u([0-9a-f]+)#ie", "iconv('UCS-2', 'UTF-8', pack('H4', '\\1'))", $str);
+	//return $str;
+	return preg_replace("#\\\u([0-9a-f]{1,4})#ie", "iconv('UCS-2', 'UTF-8', pack('H4', '\\1'))", $str);
 }
 
 function merge_options($default, $to){
@@ -81,5 +81,24 @@ function isPostBack(){
 
 function getUserId(){
 	return getUserIdFromOpenId();
+}
+
+function exitJsonIfNotLogin(){
+	if(getUserId() <= 0){
+		echo '{code:0, msg:"login pls."}';
+		exit;
+	}
+}
+
+function getCurrentUrl() {
+	$pageURL = 'http';
+	if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+	$pageURL .= "://";
+	if ($_SERVER["SERVER_PORT"] != "80") {
+		$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+	} else {
+		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+	}
+	return $pageURL;
 }
 
