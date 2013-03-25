@@ -1,3 +1,7 @@
+10:32 2013/3/25
+add task scheduling
+add update.database.php
+
 21:03 2013/3/24
 can reorder
 can subscribe new rss

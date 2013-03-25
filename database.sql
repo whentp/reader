@@ -29,6 +29,8 @@ CREATE TABLE `feeds`
 	title VARCHAR(50),
 	description VARCHAR(50),
 	activated INTEGER,
+	timestamp DATETIME,
+	failedtime INTEGER,
 	template INTEGER
 );
 

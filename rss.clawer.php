@@ -7,11 +7,10 @@ require_once 'feed.mgr.php';
 function feedList($conditions=''){
 	global $db;
 
-	$sql = 'SELECT id,title,link FROM feeds';
+	$sql = 'SELECT id,title,link,failedtime FROM feeds WHERE timestamp<=:timestamp ORDER BY failedtime, timestamp';
 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-	$conn->execute();
+	$conn->execute(array(':timestamp'=>time() - MINFETCHINTERVAL));
 	$rs = $conn->fetchAll();
-	//var_dump($rs);
 	return $rs;
 }
 
@@ -45,13 +44,19 @@ function updateFeedItem($item){
 function fetchFeedItems($url, $url_id){
 	try {
 		$when_fetch = time();
+		executeSql('UPDATE feeds SET timestamp = CASE WHEN timestamp IS NULL THEN :timestamp ELSE timestamp END,failedtime = CASE WHEN failedtime IS NULL THEN 1 ELSE failedtime + 1 END WHERE id=:id', array(':id'=>(int)$url_id, ':timestamp'=>time()));
 		$feed = new SimplePie();
 		$feed->set_feed_url($url);
 		$feed->force_feed(true);
 		$feed->set_timeout(10);
 		$success = $feed->init();
-
 		$feed->handle_content_type();
+
+		if ($feed->error()){
+			echo 'feed error: '.$feed->error();
+			echo "\n\n\n";
+			return false;
+		}
 
 		foreach(array_reverse($feed->get_items()) as $item){
 			$post = (object)(array(
@@ -72,6 +77,7 @@ function fetchFeedItems($url, $url_id){
 			$post->feed_id = $url_id;
 			updateFeedItem($post);
 		}
+		executeSql('UPDATE feeds SET timestamp = :timestamp, failedtime = 0 WHERE id=:id', array(':id'=>(int)$url_id, ':timestamp'=>time()));
 	} catch (Exception $e) {
 		echo 'Caught exception: ',  $e->getMessage(), "\n";
 	}

@@ -121,6 +121,7 @@ function getFeedList(){
         });
       bindDrag();
     }, 'json');
+  resize();
 }
 
 function loadItems(url, since_id, timestamp){
