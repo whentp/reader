@@ -18,7 +18,7 @@ die('<a href="ui.openid.google.php">Login</a> First');
 	</head>
 	<body>
 		<div id="banner">
-			<div id='logo'><a href='https://github.com/whentp/reader/issues' target='_blank' class='hostedat'>Reader</a> </div>
+			<div id='logo'><a href='https://github.com/whentp/reader' target='_blank' class='hostedat'>Reader</a> </div>
 			<div class='buttons clearfix'>
 				<a class='add-feed' href="my/outlines/add-feed">Subscribe</a>
 				<a href="ui.import.opml.php">Import</a>
