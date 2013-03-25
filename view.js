@@ -2,7 +2,8 @@
 
 window.cache = {
   items: {},
-  outlineTitle: {}
+  outlineTitle: {},
+  max_id: -1
 };
 
 $(function(){init();});
@@ -21,11 +22,13 @@ function getTitleContent(tmpstr){
 function markasread(){
   var a = $('#nav a.selected');
   var id = a.attr('data');
-  var max = a.attr('max')
+  var max = cache.max_id;
   var url = '';
   if (a.hasClass('feed')){
     url = 'my/outlines/feed-read';
-  } else if (a.hasClass('feeds')) {
+  } else if (a.hasClass('feeds') && a.hasClass('all')) {
+    url = 'my/outlines/all-read';
+  } else if (a.hasClass('feeds') && !a.hasClass('all')) {
     url = 'my/outlines/feeds-read';
   }
 
@@ -39,40 +42,36 @@ function markasread(){
 function getUnreadCount(){
   $.get('my/outlines/unread-count', {}, function(data){
       var dict = {};
-      var dictmax = {};
       $.each(data, function(a, b){
           dict[b.id] = b.unread;
-          dictmax[b.id] = b.max;
+          cache.max_id = (cache.max_id < b.max)?b.max:cache.max_id;
         });
       var sum_all = 0;
       var max_id_all = 0;
       $('a.feeds').each(function(){
           var sum = 0;
-          var max_id = 0;
           var tmpobj = $(this);
-          //console.log(tmpobj.html());
           tmpobj.parent().find('a.feed').each(function(){
               var obj = $(this);
               var id = obj.attr('data');
               if (dict[id] > 0){
                 sum += dict[id]-0;
-                if(max_id < dictmax[id]) max_id = dictmax[id];
-                obj.addClass('boldfont').attr('max', dictmax[id]).find('span').html('('+dict[id]+')').attr('data', dict[id]);
+                obj.addClass('boldfont').find('span').html('('+dict[id]+')').attr('data', dict[id]);
               } else {
                 obj.removeClass('boldfont').find('span').empty();
               }
             });
           if (sum>0){
-            tmpobj.addClass('boldfont').attr('max', max_id).find('span.unread').html(' ('+sum+')');
+            tmpobj.addClass('boldfont').find('span.unread').html(' ('+sum+')');
           } else {
             tmpobj.removeClass('boldfont').find('span.unread').empty();
           }
-          sum_all += sum;
-          if(max_id_all < max_id) max_id_all = max_id;
+          sum_all -= 0;
+          sum_all += sum-0;
         });
 
       if (sum_all>0){
-        $('a.all').addClass('boldfont').attr('max', max_id_all).find('span.unread').html(' ('+sum_all+')');
+        $('a.all').addClass('boldfont').find('span.unread').html(' ('+sum_all+')');
       } else {
         $('a.all').removeClass('boldfont').find('span.unread').empty();
       }

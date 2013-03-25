@@ -30,6 +30,16 @@ class outlines{
 		));
 		echo JSON($objPOST);
 	}
+	public function setAllRead(){
+		exitJsonIfNotLogin();
+		global $objPOST;
+		markFeedRead(array(
+			'user'=>getUserId(),
+			'all'=>1,
+			'max'=>$objPOST->max
+		));
+		echo JSON($objPOST);
+	}
 	public function setOrder(){
 		exitJsonIfNotLogin();
 		global $objPOST;

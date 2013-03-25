@@ -59,8 +59,8 @@ function markFeedRead($options){
 	$where = '';
 
 	if(isset($options->all) && $options->all == 1){
-		$where = ':id AND';
 		$id = 1;
+		$where = ':id AND';
 	} else if (isset($options->outline) && $options->outline > -1){
 		$where = 'outline_id = :id AND';
 		$id = $options->outline;
@@ -102,6 +102,7 @@ function getFeedUnreadCount($options){
 		LEFT JOIN item_statuses AS t1 ON t1.item_id = items.id AND t1.user_id = :user
 		WHERE (t2.read_until_id < items.id AND t1.read IS NULL) OR t1.read=0
 		GROUP BY items.feed_id
+		UNION SELECT -1 AS unread, max(id) max, -1 as id FROM items
 sqlend;
 
 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -114,6 +115,7 @@ sqlend;
 
 	$result = array();
 	foreach($rs as $a){
+		$a->max = (int)$a->max;
 		$result[] = $a;
 	}
 	return $result;
