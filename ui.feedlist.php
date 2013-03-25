@@ -30,7 +30,7 @@ $thisurl = getCurrentUrl();
 $thisurl = substr($thisurl, 0, strrpos($thisurl, '/'));
 $username = $username = getUserNameById(getUserId());
 if($username!=''){
-	echo $thisurl.'/user/'.$username.'/shared';
+	echo "<a href='$thisurl/user/$username/shared' target='_blank' style='border:none;padding:0;height:12px;width:12px;margin:0;line-height:12px;' title='My shared items'><img src='media/rss.png' height=12 width=12 /></a>";
 } else {
 	echo 'Click Rename to set a new username.';
 }
