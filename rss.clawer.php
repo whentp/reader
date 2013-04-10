@@ -4,10 +4,10 @@ require_once 'common.php';
 require_once 'autoloader.php';
 require_once 'feed.mgr.php';
 
-function feedList($conditions=''){
+function feedList($limit = -1){
 	global $db;
-
-	$sql = 'SELECT id,title,link,failedtime FROM feeds WHERE timestamp<=:timestamp OR timestamp IS NULL ORDER BY failedtime, timestamp';
+	$limit = ($limit < 1)?'':' LIMIT '.$limit;
+	$sql = 'SELECT id,title,link,failedtime FROM feeds WHERE timestamp<=:timestamp OR timestamp IS NULL ORDER BY failedtime, timestamp'.$limit;
 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	$conn->execute(array(':timestamp'=>time() - MINFETCHINTERVAL));
 	$rs = $conn->fetchAll();

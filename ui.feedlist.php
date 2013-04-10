@@ -3,11 +3,13 @@
 require_once 'common.php';
 
 if (getUserId() <= 0){
-die('<a href="ui.openid.google.php">Login</a> First');
+	die('<a href="ui.openid.google.php">Login</a> First');
 }
 ?><!DOCTYPE HTML>
 <html lang="en">
 	<head>
+		<meta name="viewport" content="user-scalable=no, width=device-width" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta charset="UTF-8">
 		<title>Reader</title>
 		<link rel='icon' href='media/fav.png' type='image/png' />
@@ -25,8 +27,11 @@ die('<a href="ui.openid.google.php">Login</a> First');
 				<a class='user-name' href="my/user/user-name">Rename</a> 
 				<a href="https://github.com/whentp/reader/issues" target='_blank'>Report Bugs</a> 
 				<a href="ui.logout.php">Logout</a>
-
-				<?php 
+				<select id="mobilemode">
+					<option value="0">Desktop Mode</option>
+					<option value="1">Mobile Mode</option>
+				</select><?php  ?> 
+<?php 
 $thisurl = getCurrentUrl();
 $thisurl = substr($thisurl, 0, strrpos($thisurl, '/'));
 $username = $username = getUserNameById(getUserId());
@@ -43,6 +48,7 @@ if($username!=''){
 			<div id="split"></div>
 			<div id="main">
 				<div id="toolbar">
+					<a href="" id='backtofeeds'>Back</a> 
 					<button id='refresh'>Refresh</button>
 					<select id="showall" name="showall">
 						<option value="0">All</option>

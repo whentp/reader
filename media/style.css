@@ -208,6 +208,24 @@ div.buttons a{
 	overflow: hidden;
 }
 
+.itemmobile-left{
+	float: left;
+	width: 25px; /*Width of left column*/
+	margin-left: -100%;
+	padding-left:5px;
+	height: 25px;
+	line-height: 25px;
+	overflow: hidden;
+}
+
+.mobileitem .title{
+	float:left;
+	margin: 0 30px 0 30px;
+	height: 25px;
+	line-height: 25px;
+	overflow: hidden;
+}
+
 .item-shareicon{
 	color: #fff;
 	font-family: tahoma;
@@ -393,6 +411,15 @@ span.unread{
 	max-width:600px;
 }
 
+.item-mobile-content .item-displaycontent{
+	width: 100%;
+	display: block;
+	float: left;	
+	padding: 0;
+	line-height: 1.5em;
+	max-width:100%;
+}
+
 .item-content p{
 	margin-top: 1em;
 }
@@ -446,3 +473,15 @@ span.unread{
 	background:#aaccff;
 }
 
+span.feedtools{
+	background-color: #fff;
+	background-image: url(icon-sprite.png);
+	background-repeat: no-repeat;
+	display: none;
+	float: right;
+	margin-top: -18px;
+	height: 16px;
+	width: 16px;
+	border:1px solid #666;
+	background-position: -23px -120px;
+}

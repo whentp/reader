@@ -19,7 +19,27 @@
 		</div>
 	</div>
 	<div class="item-content hidediv clearfix"></div>
+</script>
 
+<script type="text/html" id="itemsmobile">
+
+	<div class="item mobileitem {{if read}}item-read {{/if}}clearfix unbinditem" data="${id}">
+		<div class="title clearfix">
+			<span{{if !read}} class="title-unread"{{/if}}>${title}</span>
+			{{if shared}}<span class="item-shareicon">&nbsp;shared&nbsp;</span>{{/if}}
+			- 
+			<span class="item-abstract"> ${getTitleContent(description)}No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. No content. </span>
+		</div>
+		<div class="itemmobile-left clearfix">
+			<div class="markstar ${starred?'icon-starred':'icon-unstarred'}" data="${id}"></div>
+		</div>
+		<div class="item-right clearfix">
+			<div class="item-link clearfix">
+				<a href="${link}" target='_blank' class="icon-link"></a>
+			</div>
+		</div>
+	</div>
+	<div class="item-content item-mobile-content hidediv clearfix"></div>
 </script>
 
 <script type="text/html" id="item-toolbar">
@@ -51,7 +71,7 @@
 		<a class="feeds draggable" href="my/items/feeds?id=${v.id}" data="${v.id}"><span class="icon-folder"></span>${v.title} <span class='unread'></span></a>
 		<ul class='${(v.folded==1)?'hidediv':''}'>
 			{{each(i,item) obj[v.title].items}}
-			<li><a class="feed draggable" href="my/items/feed?id=${item.feed_id}&outline_id=${v.id}" outline="${v.id}" data="${item.feed_id}"><img width='16' height='16' src='https://plus.google.com/_/favicon?domain=${item.link}' /> ${item.title} <span class='unread'></span></a></li>
+			<li><a class="feed draggable" href="my/items/feed?id=${item.feed_id}&outline_id=${v.id}" outline="${v.id}" data="${item.feed_id}"><img width='16' height='16' src='https://plus.google.com/_/favicon?domain=${item.link}' /> ${item.title} <span class='unread'></span></a><span class='feedtools'></span></li>
 			{{/each}}
 		</ul>
 		</li>

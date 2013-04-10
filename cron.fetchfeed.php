@@ -3,8 +3,12 @@ define('IS_IN_READER', true);
 require_once 'common.php'; 
 require_once 'rss.clawer.php';
 
+$limit = -1;
+if(isset($_GET) && isset($_GET['limit'])){
+	$limit = (int)$_GET['limit'];
+}
 
-$items = feedList();
+$items = feedList($limit);
 $count = count($items);
 foreach($items as $index=>$a){
 	$index++;
