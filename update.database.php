@@ -1,5 +1,10 @@
 <?php
 /* so nice to implement this useful script. @whentp */
+
+if(file_exists('lock.txt')){
+	die('remove lock.txt first then run again.');
+}
+
 require 'db.php';
 error_reporting(E_ALL);
 $sqltxt = file_get_contents('database.sql');
@@ -34,3 +39,4 @@ foreach($sqls as $sql){
 }
 
 echo "DB updated.\n";
+file_put_contents('lock.txt','locked');

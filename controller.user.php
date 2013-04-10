@@ -35,6 +35,21 @@ class user{
 		echo JSON(array('code'=>$username!='', 'username'=>$username));
 
 	}
+	public function getConfig(){
+		exitJsonIfNotLogin();
+		global $objGET;
+		header_json();
+		$username = getUserId();
+		echo getConfigById($username);
+	}
+	public function setConfig(){
+		exitJsonIfNotLogin();
+		global $objPOST;
+		header_json();
+		$username = getUserId();
+		setConfigById($username, $objPOST->key, $objPOST->value);
+		echo JSON(array('code'=>1));
+	}
 	public function setUserName(){
 		exitJsonIfNotLogin();
 		global $objPOST;

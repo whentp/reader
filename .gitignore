@@ -3,3 +3,4 @@ test*
 cache/*.spc
 data/rssfeeddata.db
 data/favicons/*.png
+data/userconfig/*.json

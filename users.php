@@ -50,6 +50,18 @@ function getUserIdByName($username){
 	return getIdIfExists('SELECT id FROM users WHERE name=:username', array(':username'=>$username), 'id');
 }
 
+function getConfigById($userid){
+	$filename = 'data/userconfig/'.$userid.'.json';
+	return file_exists($filename)? file_get_contents($filename):'{}';
+}
+
+function setConfigById($userid, $key, $value){
+	$filename = 'data/userconfig/'.$userid.'.json';
+	$obj = json_decode(file_exists($filename)? file_get_contents($filename):'{}');
+	$obj->$key = $value;
+	file_put_contents($filename, json_encode($obj));
+}
+
 function getUserNameById($id){
 	global $db;
 
