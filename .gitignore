@@ -1,5 +1,5 @@
 laji/*
 test*
 cache/*.spc
-rssfeeddata.db
-
+data/rssfeeddata.db
+data/favicons/*.png

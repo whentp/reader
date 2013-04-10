@@ -31,6 +31,7 @@ CREATE TABLE `feeds`
 	activated INTEGER,
 	timestamp DATETIME,
 	failedtime INTEGER,
+	favicon VARCHAR(50),
 	template INTEGER
 );
 

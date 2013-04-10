@@ -236,7 +236,7 @@ function resize(){
 }
 
 function changeUserName(){
-  $.get('my/user/user-name', function(data){
+  $.get('my/user/user-name', {}, function(data){
     if(data.code){
       var username = data.username;
       var newname = prompt('Enter your new name', username);
@@ -333,7 +333,6 @@ function feedDragStart(ev, obj){
   return true;
 }
 
-
 function init(){
   resize();
 
@@ -366,7 +365,6 @@ function init(){
   $('#showall').change(function(){$('a.selected').click();});
   $('#list').scroll(function() {
       if (($(this).height() + this.scrollTop) >= this.scrollHeight) {
-        //root.list.showBottomLoader(true);
         var jobj = $('a.selected');
         var url = jobj.attr('href');
         var id = $('div.item:last').attr('data');

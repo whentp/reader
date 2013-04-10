@@ -64,24 +64,32 @@ function fix_xml ($xml) {
 		return $tidy;
 	}
 	else{
-
+		echo "no tidy lib found.\n";
 		return $xml;
 	}
 }
+
+function getFavicon($url, $filename){
+    $fp = fopen ($filename, 'w+');
+    $ch = curl_init('https://plus.google.com/_/favicon?domain='.$url);
+ 
+    curl_setopt($ch, CURLOPT_TIMEOUT, 6);
+ 
+    /* Save the returned data to a file */
+    curl_setopt($ch, CURLOPT_FILE, $fp);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_exec($ch);
+    curl_close($ch);
+    fclose($fp);
+  }
 
 function fetchFeedItems($url, $url_id){
 	try {
 		$when_fetch = time();
 		executeSql('UPDATE feeds SET timestamp = CASE WHEN timestamp IS NULL THEN :timestamp ELSE timestamp END,failedtime = CASE WHEN failedtime IS NULL THEN 1 ELSE failedtime + 1 END WHERE id=:id', array(':id'=>(int)$url_id, ':timestamp'=>time()));
-		//$feed = new SimplePie();
-		//$feed->set_feed_url($url);
-		//$feed->force_feed(true);
-		//$feed->set_timeout(10);
-		//$success = $feed->init();
-		//$feed->handle_content_type();
 
 		$file = new SimplePie_File($url);
-		$body =  fix_xml($file->body);
+		$body = fix_xml($file->body);
 		$feed = new SimplePie();
 		$feed->set_raw_data($body);
 		$feed->force_feed(true);
@@ -94,6 +102,11 @@ function fetchFeedItems($url, $url_id){
 			echo "\n\n\n";
 			return false;
 		}
+
+		//trying to obtain favicon.
+		//$fav = 'data/favicons/'.md5($url).'.png';
+		//getFavicon($url, $fav);
+		//executeSql('UPDATE feeds SET favicon = :fav WHERE id=:id', array(':id'=>(int)$url_id, ':fav'=>$fav));
 
 		foreach(array_reverse($feed->get_items()) as $item){
 			$post = (object)(array(
