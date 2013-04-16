@@ -16,6 +16,8 @@ create an OPML file then copy & paste to import box,
 or copy & paste existing OPML files to import box,
 or click ``subscribe'' on the top.
 
+import box can be opened in ``settings''->``import''.
+
 
 how to complain this simple reader
 
