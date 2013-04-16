@@ -348,8 +348,8 @@ function bindDrag(){
       alert('Sorry. category cannot be put into an item.');
     } else {
       data = {
-        fromfolder: tmp.folder,
-        tofolder: data.folder,
+        fromFolder: tmp.folder,
+        toFolder: data.folder,
         fromFeed: tmp.feed,
         toFeed: data.feed
       };
