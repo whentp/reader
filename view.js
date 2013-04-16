@@ -125,6 +125,7 @@ function getFeedList(){
       var box = $('#mobilemode');
       var mobilemode = box.val() == 1;;
       if(mobilemode){
+        $('#backtofeeds').css('display','inline');
         $('#nav, #split').css({width: 0});
         resize();
       }
@@ -387,6 +388,7 @@ function cronjob(){
 function init(){
   resize();
   touchScroll();
+  $('#backtofeeds').css('display','none');
   $('#backtofeeds').click(function(){
     var x = $('mobilemode').val();
     $('#nav').css({width:$(window).width()});
@@ -401,10 +403,12 @@ function init(){
     box.val(box.val());
     var mobilemode = box.val() == 1;
     if(mobilemode){
+      $('#backtofeeds').css('display','inline');
       $('#banner').find('a').css('display','none');
       $('#nav').css('width', $(window).width());
       resize();
     } else {
+      $('#backtofeeds').css('display','none');
       $('#banner').find('a').css('display', 'inline');
       $('#nav').css({width: 200});
       $('#split').css({width:5});
