@@ -1,0 +1,30 @@
+<script type="text/html" id="outlinetpl">
+	<select class='outline'>
+		{{each(k, v) outlines}}
+		<option value="${k}">${v}</option>
+		{{/each}}
+	</select>
+</script>
+
+<script type="text/html" id="feedlisttpl">
+	<table class='feedlist'>
+		{{each(k, v) feeds}}
+		<tr>
+			<td class="selectoutline" data="${v.feed_id}" datab="${v.outline_id}">{{html outlines}}</td>
+			<td>
+				<a href='#' class='feeddelete' data='${v.feed_id}'>Remove</a>
+			</td>
+			<td>
+				<input type='checkbox' class='feedcheckbox' data='${v.feed_id}' />
+				</td>
+			<td><span style="border-left:#000 solid ${tmpvaluexxx = ((v.failedtime>19)?1:(20-v.failedtime))*5}px; opacity: ${1-tmpvaluexxx/120};">&nbsp;${tmpvaluexxx}%</span></td>
+			<td><img width='16' height='16' src='https://plus.google.com/_/favicon?domain=${v.link}' /></td>
+			<td>
+				<a class="feed" href="${v.link}" outline="${v.id}" data="${v.feed_id}" title="${v.title}">${v.title.substring(0, 20)}</a>
+			</td>
+			<td>${v.link}</td>
+		</tr>
+		{{/each}}
+	</table>
+	<button id='removeselected'>Remove Selected</button> | <button id='moveto'>Move to</button> {{html outlines}} | <button id='newoutline'>New Category</button>
+</script>

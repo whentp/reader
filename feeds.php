@@ -17,7 +17,7 @@ function getFeeds($options){
 	}
 
 	$sql =<<<sqlend
-	SELECT fs.id, fs.feed_id, fs.outline_id, feeds.title, feeds.link, outlines.title AS outline, outlines.folded FROM feed_statuses AS fs
+	SELECT fs.id, fs.feed_id, fs.outline_id, feeds.title, feeds.link, outlines.title AS outline, outlines.folded, feeds.failedtime FROM feed_statuses AS fs
 		LEFT JOIN feeds ON fs.feed_id = feeds.id
 		LEFT JOIN outlines ON fs.outline_id = outlines.id
 		WHERE fs.user_id = :user $outline_option
@@ -121,6 +121,26 @@ sqlend;
 	return $result;
 }
 
+function getOutlines($user_id){
+	global $db;
+
+	$sql = 'SELECT id, title AS text FROM outlines WHERE user_id=:user';
+
+	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$conn->execute(array(
+		':user' => (int)$user_id
+	));
+	$rs = $conn->fetchAll(PDO::FETCH_OBJ);
+
+	$result = array();
+	foreach($rs as $a){
+		$a->id = (int)$a->id;
+		$result[] = $a;
+	}
+	return $result;
+}
+
+
 function updateFeedOrder($fromfeed, $tofeed, $fromoutline,$tooutline, $user_id){
 	executeSql('UPDATE feed_statuses SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
 	executeSql('UPDATE outlines SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
@@ -153,3 +173,28 @@ function updateFeedOrder($fromfeed, $tofeed, $fromoutline,$tooutline, $user_id){
 		));
 	}
 }
+
+function updateFeedsOutline($feeds, $outline, $user_id){
+	executeSql('UPDATE feed_statuses SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
+	executeSql('UPDATE outlines SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
+
+	foreach($feeds as $feed){
+		executeSql('UPDATE feed_statuses SET outline_id = :outline_id WHERE feed_id=:feed_id AND user_id=:user;', 
+			array(':outline_id'=>(int)$outline,
+			':feed_id'=>(int)$feed,
+			':user'=>$user_id));
+
+	}
+}
+
+function feedsRemove($feeds, $user_id){
+	foreach($feeds as $feed){
+		//executeSql('DETELE FROM outlines WHERE feed_id=:feed_id AND user_id=:user;', 
+		//	array(':feed_id'=>(int)$feed,
+		//	':user'=>$user_id));
+		executeSql('DELETE FROM feed_statuses WHERE feed_id=:feed_id AND user_id=:user;', 
+			array(':feed_id'=>(int)$feed,
+			':user'=>$user_id));
+	}
+}
+

@@ -1,0 +1,21 @@
+body{
+	overflow: auto;
+}
+
+table.feedlist{
+	border-collapse: collapse;
+	border: 1px solid #ccc;
+}
+table.feedlist td{
+	height: 20px;
+	line-height: 20px;
+	padding: 0 5px;
+	border: 1px solid #ccc;
+}
+table.feedlist td a{
+	text-decoration:none;
+	color: #3366ee;
+}
+table.feedlist tr.hover{
+	background:#ccddee;
+}

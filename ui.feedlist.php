@@ -23,9 +23,8 @@ if (getUserId() <= 0){
 			<div id='logo'><a href='https://github.com/whentp/reader' target='_blank' class='hostedat'>Reader</a> </div>
 			<div class='buttons clearfix'>
 				<a class='add-feed' href="my/outlines/add-feed">Subscribe</a>
-				<a href="ui.import.opml.php">Import</a>
+				<a href="ui.settings.php">Settings</a>
 				<a class='user-name' href="my/user/user-name">Rename</a> 
-				<a href="https://github.com/whentp/reader/issues" target='_blank'>Report Bugs</a> 
 				<a href="ui.logout.php">Logout</a>
 				<select id="mobilemode">
 					<option value="0">Desktop Mode</option>
@@ -59,6 +58,6 @@ if($username!=''){
 				<div id="list">Nothing.</div>
 			</div>
 		</div>
-		<?php include '_components.html'; ?>
+		<?php include '_component.reader.html'; ?>
 	</body>
 </html>

@@ -390,6 +390,7 @@ function init(){
   $('#backtofeeds').click(function(){
     var x = $('mobilemode').val();
     $('#nav').css({width:$(window).width()});
+    $('#list').empty();
     resize();
     $('mobilemode').val(x);
     return false;

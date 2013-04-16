@@ -10,6 +10,9 @@ class outlines{
 	public function getUnreadCount(){
 		echo JSON(getFeedUnreadCount(array('user'=>getUserId())));
 	}
+	public function getAllOutlines(){
+		echo JSON(getOutlines(getUserId()));
+	}
 	public function setFeedRead(){
 		exitJsonIfNotLogin();
 		global $objPOST;
@@ -52,6 +55,25 @@ class outlines{
 		);
 		echo JSON(array('code'=>true));
 	}
+	public function setFeedsOutline(){
+		exitJsonIfNotLogin();
+		global $objPOST;
+		updateFeedsOutline(
+			$objPOST->feeds,
+			(int)$objPOST->outline,
+			getUserId()
+		);
+		echo JSON(array('code'=>true));
+	}
+	public function setFeedsRemove(){
+		exitJsonIfNotLogin();
+		global $objPOST;
+		feedsRemove(
+			$objPOST->feeds,
+			getUserId()
+		);
+		echo JSON(array('code'=>true));
+	}
 	public function setFold(){
 		exitJsonIfNotLogin();
 		global $objPOST;
@@ -61,13 +83,19 @@ class outlines{
 		executeSql('UPDATE outlines SET folded=:folded WHERE id=:id AND user_id=:user_id', array(':id'=>$id, ':folded'=>$folded, ':user_id'=>getUserId()));
 		echo JSON(array('code'=>1));
 	}
-
 	public function setAddFeed(){
 		exitJsonIfNotLogin();
 		global $objPOST;
 		$url = $objPOST->url;
 		require 'feed.mgr.php';
 		echo JSON(array('code'=>importSingleRss($url, getUserId())));
+	}
+	public function setAddOutline(){
+		exitJsonIfNotLogin();
+		global $objPOST;
+		$txt = $objPOST->outline;
+		require 'feed.mgr.php';
+		echo JSON(array('code'=>outlineAdd($txt, $txt, getUserId())));
 	}
 }
 
