@@ -39,9 +39,9 @@ function folderAdd($title='', $text='', $user_id=''){
 
 function feedStatusExists($feed_id, $folder_id, $user_id){
 	return getIdIfExists(
-		'SELECT id FROM feed_statuses WHERE feed_id = :feed_id AND folder_id = :folder_id AND user_id = :user_id LIMIT 1', array(
+		'SELECT id FROM feed_statuses WHERE feed_id = :feed_id AND user_id = :user_id LIMIT 1', array(
 			':feed_id' => (int)$feed_id,
-			':folder_id' => (int)$folder_id,
+			//':folder_id' => (int)$folder_id,
 			':user_id' => (int)$user_id
 		), 'id');
 }

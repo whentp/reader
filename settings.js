@@ -127,7 +127,7 @@ function getFeedList(tmpstr){
       });
       if(data.length<=0) return;
       var value = $(this).val();
-      setFolder([data], $(this).val(), function(){
+      setFolder(data, $(this).val(), function(){
         $.each(data, function(a, b){
           $('table.feedlist td[data='+b+'] select').val(value);
         });
@@ -174,7 +174,7 @@ function getFeedList(tmpstr){
         tmpjobj.push($(this));
       });
       if(data.length<=0) return;
-      feedsRemove([data], function(){
+      feedsRemove(data, function(){
         $.each(tmpjobj, function(a,b){
           b.parent().parent().hide(100);
         });
