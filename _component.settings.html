@@ -8,6 +8,15 @@
 
 <script type="text/html" id="feedlisttpl">
 	<table class='feedlist'>
+		<tr>
+			<td>Category</td>
+			<td>Delete</td>
+			<td>&nbsp;</td>
+			<td>Health</td>
+			<td>&nbsp;</td>
+			<td>Title</td>
+			<td>url</td>
+		</tr>
 		{{each(k, v) feeds}}
 		<tr>
 			<td class="selectoutline" data="${v.feed_id}" datab="${v.outline_id}">{{html outlines}}</td>
@@ -16,7 +25,7 @@
 			</td>
 			<td>
 				<input type='checkbox' class='feedcheckbox' data='${v.feed_id}' />
-				</td>
+			</td>
 			<td><span style="border-left:#000 solid ${tmpvaluexxx = ((v.failedtime>19)?1:(20-v.failedtime))*5}px; opacity: ${1-tmpvaluexxx/120};">&nbsp;${tmpvaluexxx}%</span></td>
 			<td><img width='16' height='16' src='https://plus.google.com/_/favicon?domain=${v.link}' /></td>
 			<td>
