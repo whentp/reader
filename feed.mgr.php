@@ -73,7 +73,7 @@ function importFromOpmlText($text, $user_id){
 
 	foreach($x->body->outline as $outlines){
 		$tmp_attr = $outlines->attributes();
-		$outline_id = outlineAdd($tmp_attr->title, $tmp_attr->text, $user_id);
+		$outline_id = folderAdd($tmp_attr->title, $tmp_attr->text, $user_id);
 		foreach($outlines as $outline)
 		{
 			$attr = $outline->attributes();
