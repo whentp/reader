@@ -9,7 +9,7 @@ CREATE TABLE `users`
 );
 CREATE INDEX `user_name_idx` ON `users`(name);
 
-CREATE TABLE `outlines`
+CREATE TABLE `folders`
 (
 	--created by @whentp, using sqlite3
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,14 +39,14 @@ CREATE TABLE `feed_statuses`
 (
 	--created by @whentp, using sqlite3
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	outline_id INTEGER,
+	folder_id INTEGER,
 	feed_id INTEGER,
 	user_id INTEGER,
 	read INTEGER,
 	read_until_id INTEGER,
 	order_index INTEGER,
 	FOREIGN KEY(user_id) REFERENCES users(id),
-	FOREIGN KEY(outline_id) REFERENCES outlines(id),
+	FOREIGN KEY(folder_id) REFERENCES folders(id),
 	FOREIGN KEY(feed_id) REFERENCES feeds(id)
 );
 

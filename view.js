@@ -2,7 +2,7 @@
 
 window.cache = {
   items: {},
-  outlineTitle: {},
+  folderTitle: {},
   max_id: -1
 };
 
@@ -25,11 +25,11 @@ function markasread(){
   var max = cache.max_id;
   var url = '';
   if (a.hasClass('feed')){
-    url = 'my/outlines/feed-read';
+    url = 'my/folders/feed-read';
   } else if (a.hasClass('feeds') && a.hasClass('all')) {
-    url = 'my/outlines/all-read';
+    url = 'my/folders/all-read';
   } else if (a.hasClass('feeds') && !a.hasClass('all')) {
-    url = 'my/outlines/feeds-read';
+    url = 'my/folders/feeds-read';
   }
 
   $.post(url, {'id': id, 'max': max}, function(data){
@@ -40,7 +40,7 @@ function markasread(){
 }
 
 function getUnreadCount(){
-  $.get('my/outlines/unread-count', {}, function(data){
+  $.get('my/folders/unread-count', {}, function(data){
     var dict = {};
     $.each(data, function(a, b){
       dict[b.id] = b.unread;
@@ -86,34 +86,34 @@ function setTitle(unread){
 }
 
 function getFeedList(){
-  $.get('my/outlines/all', {}, function(data){
-    var outlineGroup = {};
-    var outlineList = [];
+  $.get('my/folders/all', {}, function(data){
+    var folderGroup = {};
+    var folderList = [];
     $.each(data, function(a, b){
-      var k = b.outline;
-      cache.outlineTitle[b.feed_id] = b.title;
-      if(!outlineGroup[k]){
-        outlineList.push({
+      var k = b.folder;
+      cache.folderTitle[b.feed_id] = b.title;
+      if(!folderGroup[k]){
+        folderList.push({
           title: k,
-          id: b.outline_id,
+          id: b.folder_id,
           folded: b.folded
         });
-        outlineGroup[k]={
+        folderGroup[k]={
           title: k,
-          id: b.outline_id,
+          id: b.folder_id,
           items: []
         };
       }
-      outlineGroup[k].items.push(b);
+      folderGroup[k].items.push(b);
     });
-    $('div#nav').html($('#outlines').tmpl({outlinelist: outlineList, obj:outlineGroup}));
+    $('div#nav').html($('#folders').tmpl({folderlist: folderList, obj:folderGroup}));
     getUnreadCount();
 
     $('span.icon-folder').off().click(function(){
       $(this).parent().next().toggleClass('hidediv');
       var id = $(this).parent().attr('data');
       var folded = $(this).parent().next().hasClass('hidediv')?1:0;
-      $.post('my/outlines/fold', {'id': id , 'folded': folded});
+      $.post('my/folders/fold', {'id': id , 'folded': folded});
       return false;
     });
     $('a.feeds, a.feed').off().click(function(){
@@ -341,19 +341,19 @@ function bindDrag(){
     var tmp = JSON.parse(dt.getData('text/plain'));
     var data = {type: obj.hasClass('feeds')?1:0};
     data.feed = (data.type == 1)? -1 : obj.attr('data');
-    data.outline = (data.type == 1)?obj.attr('data'):obj.attr('outline');
+    data.folder = (data.type == 1)?obj.attr('data'):obj.attr('folder');
 
     $(ev.target).removeClass('dragover');
     if(tmp.type > data.type){
       alert('Sorry. category cannot be put into an item.');
     } else {
       data = {
-        fromOutline: tmp.outline,
-        toOutline: data.outline,
+        fromfolder: tmp.folder,
+        tofolder: data.folder,
         fromFeed: tmp.feed,
         toFeed: data.feed
       };
-      $.post('my/outlines/order', data, function(data){
+      $.post('my/folders/order', data, function(data){
         getFeedList();
       }, 'json');
     }
@@ -369,7 +369,7 @@ function feedDragStart(ev, obj){
   var dt = ev.originalEvent.dataTransfer;
   var data = {type: obj.hasClass('feeds')?1:0};
   data.feed = (data.type == 1)? -1 : obj.attr('data');
-  data.outline = (data.type == 1)?obj.attr('data'):obj.attr('outline');
+  data.folder = (data.type == 1)?obj.attr('data'):obj.attr('folder');
   dt.setData("text/plain", JSON.stringify(data));
   return true;
 }
@@ -427,7 +427,7 @@ function init(){
   $('a.add-feed').click(function(){
     var url = prompt('Enter the RSS address:');
     if(url){
-      $.post('my/outlines/add-feed', {'url':url}, function(data){
+      $.post('my/folders/add-feed', {'url':url}, function(data){
         if(data.code){
           getFeedList();
           alert('OK.');

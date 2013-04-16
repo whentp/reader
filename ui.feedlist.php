@@ -22,7 +22,7 @@ if (getUserId() <= 0){
 		<div id="banner">
 			<div id='logo'><a href='https://github.com/whentp/reader' target='_blank' class='hostedat'>Reader</a> </div>
 			<div class='buttons clearfix'>
-				<a class='add-feed' href="my/outlines/add-feed">Subscribe</a>
+				<a class='add-feed' href="my/folders/add-feed">Subscribe</a>
 				<a href="ui.settings.php">Settings</a>
 				<a class='user-name' href="my/user/user-name">Rename</a> 
 				<a href="ui.logout.php">Logout</a>
