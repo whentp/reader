@@ -2,7 +2,7 @@
 
 require_once 'common.php';
 
-class outlines{
+class folders{
 	public function getAll(){
 		exitJsonIfNotLogin();
 		echo JSON(getFeeds(array('user'=>getUserId())));
@@ -10,8 +10,8 @@ class outlines{
 	public function getUnreadCount(){
 		echo JSON(getFeedUnreadCount(array('user'=>getUserId())));
 	}
-	public function getAllOutlines(){
-		echo JSON(getOutlines(getUserId()));
+	public function getAllFolders(){
+		echo JSON(getFolders(getUserId()));
 	}
 	public function setFeedRead(){
 		exitJsonIfNotLogin();
@@ -28,7 +28,7 @@ class outlines{
 		global $objPOST;
 		markFeedRead(array(
 			'user'=>getUserId(),
-			'outline'=>$objPOST->id,
+			'folder'=>$objPOST->id,
 			'max'=>$objPOST->max
 		));
 		echo JSON($objPOST);
@@ -49,18 +49,18 @@ class outlines{
 		updateFeedOrder(
 			(int)$objPOST->fromFeed,
 			(int)$objPOST->toFeed,
-			(int)$objPOST->fromOutline,
-			(int)$objPOST->toOutline,
+			(int)$objPOST->fromFolder,
+			(int)$objPOST->toFolder,
 			getUserId()
 		);
 		echo JSON(array('code'=>true));
 	}
-	public function setFeedsOutline(){
+	public function setFeedsFolder(){
 		exitJsonIfNotLogin();
 		global $objPOST;
-		updateFeedsOutline(
+		updateFeedsFolder(
 			$objPOST->feeds,
-			(int)$objPOST->outline,
+			(int)$objPOST->folder,
 			getUserId()
 		);
 		echo JSON(array('code'=>true));
@@ -80,7 +80,7 @@ class outlines{
 		$id = (int)$objPOST->id;
 		$folded = (int)$objPOST->folded?1:0;
 		var_dump($objPOST, $folded);
-		executeSql('UPDATE outlines SET folded=:folded WHERE id=:id AND user_id=:user_id', array(':id'=>$id, ':folded'=>$folded, ':user_id'=>getUserId()));
+		executeSql('UPDATE folders SET folded=:folded WHERE id=:id AND user_id=:user_id', array(':id'=>$id, ':folded'=>$folded, ':user_id'=>getUserId()));
 		echo JSON(array('code'=>1));
 	}
 	public function setAddFeed(){
@@ -90,12 +90,12 @@ class outlines{
 		require 'feed.mgr.php';
 		echo JSON(array('code'=>importSingleRss($url, getUserId())));
 	}
-	public function setAddOutline(){
+	public function setAddFolder(){
 		exitJsonIfNotLogin();
 		global $objPOST;
-		$txt = $objPOST->outline;
+		$txt = $objPOST->folder;
 		require 'feed.mgr.php';
-		echo JSON(array('code'=>outlineAdd($txt, $txt, getUserId())));
+		echo JSON(array('code'=>folderAdd($txt, $txt, getUserId())));
 	}
 }
 

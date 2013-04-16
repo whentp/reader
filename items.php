@@ -39,23 +39,23 @@ function getItems($options){
 		//var_dump($whereclause);	
 	}
 
-	// outline_option specifies outline_id or feed_id, otherwise all items will be listed.
-	$outline_option = '';
-	if (isset($options->outline_id) && $options->outline_id){
-		$outline_option = 'AND t2.outline_id = '.((int)$options->outline_id);
+	// folder_option specifies folder_id or feed_id, otherwise all items will be listed.
+	$folder_option = '';
+	if (isset($options->folder_id) && $options->folder_id){
+		$folder_option = 'AND t2.folder_id = '.((int)$options->folder_id);
 	}
 	if (isset($options->feed_id) && $options->feed_id>-1){
-		$outline_option = 'AND t2.feed_id = '.((int)$options->feed_id);
+		$folder_option = 'AND t2.feed_id = '.((int)$options->feed_id);
 	}
 
 	$whereclause = addWhere(join(' AND ', $whereclause));
 
 	/*
-	 * show outline
+	 * show folder
 	 *
 	 * $sql =<<<sqlend
-		SELECT items.id, items.title, items.link, items.pubDate, items.description, items.feed_id, feeds.title AS outline, ((t2.read_until_id >= items.id AND t1.read IS NULL) OR t1.read) AS read, t1.starred FROM items 
-			INNER JOIN feed_statuses AS t2 ON items.feed_id = t2.feed_id AND t2.user_id = $user_id $outline_option
+		SELECT items.id, items.title, items.link, items.pubDate, items.description, items.feed_id, feeds.title AS folder, ((t2.read_until_id >= items.id AND t1.read IS NULL) OR t1.read) AS read, t1.starred FROM items 
+			INNER JOIN feed_statuses AS t2 ON items.feed_id = t2.feed_id AND t2.user_id = $user_id $folder_option
 			LEFT JOIN feeds ON feeds.id = items.feed_id
 			LEFT JOIN item_statuses AS t1 ON t1.item_id = items.id AND t1.user_id = $user_id
 			$whereclause
@@ -65,7 +65,7 @@ sqlend;*/
 
 	$sql =<<<sqlend
 		SELECT items.id, items.title, items.link, items.pubDate, items.author, items.description, items.feed_id, t1.shared, ((t2.read_until_id >= items.id AND t1.read IS NULL) OR t1.read) AS read, t1.starred FROM items 
-			INNER JOIN feed_statuses AS t2 ON items.feed_id = t2.feed_id AND t2.user_id = $user_id $outline_option
+			INNER JOIN feed_statuses AS t2 ON items.feed_id = t2.feed_id AND t2.user_id = $user_id $folder_option
 			LEFT JOIN item_statuses AS t1 ON t1.item_id = items.id AND t1.user_id = $user_id
 			$whereclause
 			ORDER BY items.pubDate DESC, items.id DESC

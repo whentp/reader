@@ -42,7 +42,6 @@ function arrayRecursive(&$array, $function, $apply_to_keys_also = false){
 	}
 }
 
-
 function object_to_array($obj) {
 	$arr = array();
 	$arrObj = is_object($obj) ? get_object_vars($obj) : $obj;

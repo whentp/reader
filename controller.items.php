@@ -22,14 +22,14 @@ class items{
 
 		$since_id = isset($objGET->since_id)?$objGET->since_id:-1;
 		$timestamp = isset($objGET->timestamp)?$objGET->timestamp:-1;
-		$outline_id = isset($objGET->outline)?$objGET->outline:-1;
+		$folder_id = isset($objGET->folder)?$objGET->folder:-1;
 
 		header_json();
 		echo JSON(getItems(array(
 			'unread'=>$objGET->unread,
 			'feed_id'=>$objGET->id,
 			'timestamp'=>$timestamp,
-			'outline_id'=>$outline_id,
+			'folder_id'=>$folder_id,
 			'since_id'=>$since_id
 		)));
 	}
@@ -42,7 +42,7 @@ class items{
 		header_json();
 		echo JSON(getItems(array(
 			'unread'=>$objGET->unread,
-			'outline_id'=>$objGET->id,
+			'folder_id'=>$objGET->id,
 			'timestamp'=>$timestamp,
 			'since_id'=>$since_id
 		)));

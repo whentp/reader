@@ -17,39 +17,39 @@ function feedAdd($link, $title='', $description=''){
 	return $feed_id;
 }
 
-function outlineExists($title, $text, $user_id){
+function folderExists($title, $text, $user_id){
 	return getIdIfExists(
-		'SELECT id FROM outlines WHERE title = :title AND text = :text AND user_id = :user LIMIT 1', array(
+		'SELECT id FROM folders WHERE title = :title AND text = :text AND user_id = :user LIMIT 1', array(
 			':title' => $title,
 			':text' => $text,
 			':user' => $user_id
 		), 'id');
 }
 
-function outlineAdd($title='', $text='', $user_id=''){
-	if (($outline_id = outlineExists($title, $text, $user_id)) !== false){
-		return $outline_id;
+function folderAdd($title='', $text='', $user_id=''){
+	if (($folder_id = folderExists($title, $text, $user_id)) !== false){
+		return $folder_id;
 	}
-	return getIdByInsert('outlines', array(
+	return getIdByInsert('folders', array(
 		'title' => $title,
 		'text' => $text,
 		'user_id' => $user_id
 	));
 }
 
-function feedStatusExists($feed_id, $outline_id, $user_id){
+function feedStatusExists($feed_id, $folder_id, $user_id){
 	return getIdIfExists(
-		'SELECT id FROM feed_statuses WHERE feed_id = :feed_id AND outline_id = :outline_id AND user_id = :user_id LIMIT 1', array(
+		'SELECT id FROM feed_statuses WHERE feed_id = :feed_id AND folder_id = :folder_id AND user_id = :user_id LIMIT 1', array(
 			':feed_id' => (int)$feed_id,
-			':outline_id' => (int)$outline_id,
+			':folder_id' => (int)$folder_id,
 			':user_id' => (int)$user_id
 		), 'id');
 }
 
-function feedStatusAdd($feed_id, $outline_id, $user_id){
+function feedStatusAdd($feed_id, $folder_id, $user_id){
 	return getIdByInsert('feed_statuses', array(
 		'feed_id' => $feed_id,
-		'outline_id' => $outline_id,
+		'folder_id' => $folder_id,
 		'user_id' => $user_id,
 		'read' => 0,
 		'read_until_id' => 0));

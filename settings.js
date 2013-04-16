@@ -2,7 +2,6 @@
 
 window.cache = {
   items: {},
-  outlineTitle: {},
   max_id: -1
 };
 
@@ -93,8 +92,8 @@ function saveUserConfig(k, v){
 
 var tmpvaluexxx;
 
-function setOutline(items, outline, callback){
-  $.post('my/outlines/feeds-outline', {feeds: items, 'outline': outline}, function(data){
+function setFolder(items, folder, callback){
+  $.post('my/folders/feeds-folder', {feeds: items, 'folder': folder}, function(data){
     if(data.code){
       callback();
     }
@@ -102,7 +101,7 @@ function setOutline(items, outline, callback){
 }
 
 function feedsRemove(items, callback){
-  $.post('my/outlines/feeds-remove', {feeds: items}, function(data){
+  $.post('my/folders/feeds-remove', {feeds: items}, function(data){
     if(data.code){
       callback();
     }
@@ -110,13 +109,13 @@ function feedsRemove(items, callback){
 }
 
 function getFeedList(tmpstr){
-  $.get('my/outlines/all', {}, function(data){ 
-    var outlinestr = tmpstr;
-    $('#framework').html($('#feedlisttpl').tmpl({outlines: outlinestr, feeds:data}));
+  $.get('my/folders/all', {}, function(data){ 
+    var folderstr = tmpstr;
+    $('#framework').html($('#feedlisttpl').tmpl({folders: folderstr, feeds:data}));
 
     $('table.feedlist td select').change(function(){
       var data = $(this).parent().attr('data');
-      setOutline([data], $(this).val(), function(){});
+      setFolder([data], $(this).val(), function(){});
     });
 
     $('table.feedlist td select').change(function(){
@@ -128,7 +127,7 @@ function getFeedList(tmpstr){
       });
       if(data.length<=0) return;
       var value = $(this).val();
-      setOutline([data], $(this).val(), function(){
+      setFolder([data], $(this).val(), function(){
         $.each(data, function(a, b){
           $('table.feedlist td[data='+b+'] select').val(value);
         });
@@ -136,7 +135,7 @@ function getFeedList(tmpstr){
       });
     });
 
-    $('table.feedlist td.selectoutline').each(function(){
+    $('table.feedlist td.selectfolder').each(function(){
       $(this).find('select').val($(this).attr('datab'));
     });
     $('table.feedlist tr').hover(function(){
@@ -154,10 +153,10 @@ function getFeedList(tmpstr){
       return false;
     });
 
-    $('#newoutline').click(function(){
+    $('#newfolder').click(function(){
       var newname = prompt('Name')
       if(newname.length){
-        $.post('my/outlines/add-outline', {outline:newname}, function(data){
+        $.post('my/folders/add-folder', {folder:newname}, function(data){
           if(data.code){
             window.location.reload();
           } else {
@@ -185,12 +184,12 @@ function getFeedList(tmpstr){
 }
 
 function init(){
-  $.get('my/outlines/all-outlines', {}, function(data){
-    var outlines = {};
+  $.get('my/folders/all-folders', {}, function(data){
+    var folders = {};
     $.each(data, function(a,b){
-      outlines[''+b.id] = b.text;
+      folders[''+b.id] = b.text;
     });
-    var outlinestr = $($('#outlinetpl').tmpl({'outlines': outlines})).wrapAll('<div></div>').parent().html();
-    getFeedList(outlinestr);
+    var folderstr = $($('#foldertpl').tmpl({'folders': folders})).wrapAll('<div></div>').parent().html();
+    getFeedList(folderstr);
   }, 'json');
 }

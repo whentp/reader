@@ -7,21 +7,21 @@ function getFeeds($options){
 	$default_options = array(
 		'unread'=>0,
 		'user'=> getUserId()
-		//'outline' => 1 ; this gives only feeds under outline 1.
+		//'folder' => 1 ; this gives only feeds under folder 1.
 	);
 
 	$options = merge_options($default_options, $options);
-	$outline_option = '';
-	if (isset($options->outline) && $options->outline){
-		$outline_option = 'AND fs.outline_id='.(int)$options->outline;
+	$folder_option = '';
+	if (isset($options->folder) && $options->folder){
+		$folder_option = 'AND fs.folder_id='.(int)$options->folder;
 	}
 
 	$sql =<<<sqlend
-	SELECT fs.id, fs.feed_id, fs.outline_id, feeds.title, feeds.link, outlines.title AS outline, outlines.folded, feeds.failedtime FROM feed_statuses AS fs
+	SELECT fs.id, fs.feed_id, fs.folder_id, feeds.title, feeds.link, folders.title AS folder, folders.folded, feeds.failedtime FROM feed_statuses AS fs
 		LEFT JOIN feeds ON fs.feed_id = feeds.id
-		LEFT JOIN outlines ON fs.outline_id = outlines.id
-		WHERE fs.user_id = :user $outline_option
-		ORDER BY outlines.order_index, outlines.id, fs.order_index, fs.id
+		LEFT JOIN folders ON fs.folder_id = folders.id
+		WHERE fs.user_id = :user $folder_option
+		ORDER BY folders.order_index, folders.id, fs.order_index, fs.id
 sqlend;
 
 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -48,7 +48,7 @@ function markFeedRead($options){
 	$default_options = array(
 		'user'=> getUserId(),
 		'feed'=> -1,
-		'outline'=> -1,
+		'folder'=> -1,
 		'all'=> 0,
 		'max'=> -1
 	);
@@ -61,9 +61,9 @@ function markFeedRead($options){
 	if(isset($options->all) && $options->all == 1){
 		$id = 1;
 		$where = ':id AND';
-	} else if (isset($options->outline) && $options->outline > -1){
-		$where = 'outline_id = :id AND';
-		$id = $options->outline;
+	} else if (isset($options->folder) && $options->folder > -1){
+		$where = 'folder_id = :id AND';
+		$id = $options->folder;
 	} else if (isset($options->feed) && $options->feed > -1){
 		$where = 'feed_id = :id AND';
 		$id = $options->feed;
@@ -121,10 +121,10 @@ sqlend;
 	return $result;
 }
 
-function getOutlines($user_id){
+function getFolders($user_id){
 	global $db;
 
-	$sql = 'SELECT id, title AS text FROM outlines WHERE user_id=:user';
+	$sql = 'SELECT id, title AS text FROM folders WHERE user_id=:user';
 
 	$conn = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	$conn->execute(array(
@@ -140,11 +140,10 @@ function getOutlines($user_id){
 	return $result;
 }
 
-
-function updateFeedOrder($fromfeed, $tofeed, $fromoutline,$tooutline, $user_id){
+function updateFeedOrder($fromfeed, $tofeed, $fromfolder,$tofolder, $user_id){
 	executeSql('UPDATE feed_statuses SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
-	executeSql('UPDATE outlines SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
-	if($fromfeed != $tofeed && $fromoutline == $tooutline){
+	executeSql('UPDATE folders SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
+	if($fromfeed != $tofeed && $fromfolder == $tofolder){
 		$order_index = getIdIfExists('SELECT order_index FROM feed_statuses WHERE id=:id', array(':id' => $fromfeed), 'order_index');
 		executeSql('UPDATE feed_statuses SET order_index = (SELECT order_index FROM feed_statuses WHERE id=:toid) WHERE id=:fromid',
 			array(':fromid'=>$fromfeed,
@@ -155,32 +154,32 @@ function updateFeedOrder($fromfeed, $tofeed, $fromoutline,$tooutline, $user_id){
 			':toid'=>$tofeed
 		));
 	}
-	else if($fromfeed == -1 && $tofeed == -1 && $fromoutline != $tooutline){
-		$order_index = getIdIfExists('SELECT order_index FROM outlines WHERE id=:id', array(':id' => $fromoutline), 'order_index');
-		executeSql('UPDATE outlines SET order_index = (SELECT order_index FROM outlines WHERE id=:toid) WHERE id=:fromid',
-			array(':fromid'=>$fromoutline,
-			':toid'=>$tooutline
+	else if($fromfeed == -1 && $tofeed == -1 && $fromfolder != $tofolder){
+		$order_index = getIdIfExists('SELECT order_index FROM folders WHERE id=:id', array(':id' => $fromfolder), 'order_index');
+		executeSql('UPDATE folders SET order_index = (SELECT order_index FROM folders WHERE id=:toid) WHERE id=:fromid',
+			array(':fromid'=>$fromfolder,
+			':toid'=>$tofolder
 		));
-		executeSql('UPDATE outlines SET order_index = :order_index WHERE id=:toid',
+		executeSql('UPDATE folders SET order_index = :order_index WHERE id=:toid',
 			array(':order_index'=>$order_index,
-			':toid'=>$tooutline
+			':toid'=>$tofolder
 		));
 	}
-	else if($fromfeed > -1 && $fromoutline != $tooutline){
-		executeSql('UPDATE feed_statuses SET outline_id = :outline_id WHERE id=:fromfeed',
-			array(':outline_id'=>$tooutline,
+	else if($fromfeed > -1 && $fromfolder != $tofolder){
+		executeSql('UPDATE feed_statuses SET folder_id = :folder_id WHERE id=:fromfeed',
+			array(':folder_id'=>$tofolder,
 			':fromfeed'=>$fromfeed
 		));
 	}
 }
 
-function updateFeedsOutline($feeds, $outline, $user_id){
+function updateFeedsFolder($feeds, $folder, $user_id){
 	executeSql('UPDATE feed_statuses SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
-	executeSql('UPDATE outlines SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
+	executeSql('UPDATE folders SET order_index = id WHERE order_index IS NULL AND user_id=:user;', array(':user'=>$user_id));
 
 	foreach($feeds as $feed){
-		executeSql('UPDATE feed_statuses SET outline_id = :outline_id WHERE feed_id=:feed_id AND user_id=:user;', 
-			array(':outline_id'=>(int)$outline,
+		executeSql('UPDATE feed_statuses SET folder_id = :folder_id WHERE feed_id=:feed_id AND user_id=:user;', 
+			array(':folder_id'=>(int)$folder,
 			':feed_id'=>(int)$feed,
 			':user'=>$user_id));
 
@@ -189,9 +188,6 @@ function updateFeedsOutline($feeds, $outline, $user_id){
 
 function feedsRemove($feeds, $user_id){
 	foreach($feeds as $feed){
-		//executeSql('DETELE FROM outlines WHERE feed_id=:feed_id AND user_id=:user;', 
-		//	array(':feed_id'=>(int)$feed,
-		//	':user'=>$user_id));
 		executeSql('DELETE FROM feed_statuses WHERE feed_id=:feed_id AND user_id=:user;', 
 			array(':feed_id'=>(int)$feed,
 			':user'=>$user_id));
