@@ -4,7 +4,7 @@ require_once 'common.php';
 require_once 'rss.clawer.php';
 
 $limit = getIdIfExists('SELECT COUNT(id) AS id FROM feeds WHERE timestamp<=:timestamp OR timestamp IS NULL', 
-	array(':timestamp'=>time() - MINFETCHINTERVAL), 'id');;
+	array(':timestamp'=>time() - MINFETCHINTERVAL), 'id');
 if(isset($_GET) && isset($_GET['limit'])){
 	$limit = (int)$_GET['limit'];
 }
