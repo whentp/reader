@@ -16,12 +16,20 @@ function checkSafe(){
 }
 
 // in an include used on every page load:
-if (get_magic_quotes_gpc()) {
-	foreach (array('_GET', '_POST', '_COOKIE', '_REQUEST') as $src) {
-		foreach ($$src as $key => $val) {
-			$$src[$key] = stripslashes($val);
+if ((function_exists("get_magic_quotes_gpc") && get_magic_quotes_gpc()) || (ini_get('magic_quotes_sybase') && (strtolower(ini_get('magic_quotes_sybase'))!="off"))) {
+	$process = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
+	while (list($key, $val) = each($process)) {
+		foreach ($val as $k => $v) {
+			unset($process[$key][$k]);
+			if (is_array($v)) {
+				$process[$key][stripslashes($k)] = $v;
+				$process[] = &$process[$key][stripslashes($k)];
+			} else {
+				$process[$key][stripslashes($k)] = stripslashes($v);
+			}
 		}
 	}
+	unset($process);
 }
 
 function arrayRecursive(&$array, $function, $apply_to_keys_also = false){
