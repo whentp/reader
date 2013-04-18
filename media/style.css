@@ -61,25 +61,16 @@ html[xmlns] .clearfix { display: block; }
 	height: 9px !important;
 }
 ::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment {
-	border-bottom-left-radius: 5px 5px !important;
-	border-bottom-right-radius: 5px 5px !important;
-	border-top-left-radius: 5px 5px !important;
-	border-top-right-radius: 5px 5px !important;
 	height: 0px !important;
 	display: block !important;
 	background-color: transparent !important;
 }
 ::-webkit-scrollbar-track-piece {
-	background-color: rgba(200,200,200,0.4) !important;
-	border-bottom-left-radius: 5px 5px !important;
-	border-bottom-right-radius: 5px 5px !important;
-	border-top-left-radius: 5px 5px !important;
-	border-top-right-radius: 5px 5px !important;
+	background-color: rgba(200,200,200,0.4) !important;	
 }
 ::-webkit-scrollbar-thumb:vertical, ::-webkit-scrollbar-thumb:horizontal {
 	height: 50px !important;
 	background-color: rgba(1,1,1, 0.4) !important;
-	-webkit-border-radius: 5px !important;
 }
 ::-webkit-scrollbar-thumb:vertical:hover, ::-webkit-scrollbar-thumb:horizontal:hover {
 	background-color: #333333 !important;
