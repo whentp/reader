@@ -73,6 +73,19 @@ function importFromOpmlText($text, $user_id){
 
 	foreach($x->body->outline as $outlines){
 		$tmp_attr = $outlines->attributes();
+		if (isset($tmp_attr->xmlUrl) && $tmp_attr->xmlUrl && strlen($tmp_attr->xmlUrl)>1){
+			$outline_id = folderAdd('Uncategorized', 'Uncategorized', $user_id);
+			$r = (object)(array(
+				'title'=> (string) $tmp_attr->title,
+				'link'=> (string) $tmp_attr->xmlUrl,
+				'description'=> (string) $tmp_attr->text
+			));
+			$feed_id = feedAdd($r->link, $r->title, $r->description);
+			if (feedStatusExists($feed_id, $outline_id, $user_id) === false){
+				feedStatusAdd($feed_id, $outline_id, $user_id);
+			}
+			continue;
+		}
 		$outline_id = folderAdd($tmp_attr->title, $tmp_attr->text, $user_id);
 		foreach($outlines as $outline)
 		{
@@ -100,25 +113,31 @@ function importFromGoogleReader($filename){
 
 function importSingleRss($url, $user_id){
 	require_once 'autoloader.php';
+	require_once 'rss.clawer.php';
 	try {
+		$file = new SimplePie_File($url);
+		$body = fix_xml($file->body);
 		$feed = new SimplePie();
-		$feed->set_feed_url($url);
+		$feed->set_raw_data($body);
 		$feed->force_feed(true);
+		$feed->set_timeout(20);
 		$success = $feed->init();
+		$feed->handle_content_type();
+
 		if ($success){
 			$title = $feed->get_title();
 			$opml =<<<opmlend
-	<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 	<opml version="1.0">
 	<head>
-	<title>whentp import</title>
+		<title>whentp import</title>
 	</head>
 	<body>
-	<outline title="Uncategorized" text="Uncategorized">
-	<outline text="$title" title="$title" type="rss" xmlUrl="$url" />
-	</outline>
+		<outline title="Uncategorized" text="Uncategorized">
+			<outline text="$title" title="$title" type="rss" xmlUrl="$url" />
+		</outline>
 	</body>
-	</opml>
+</opml>
 opmlend;
 			importFromOpmlText(trim($opml), $user_id);
 			return true;

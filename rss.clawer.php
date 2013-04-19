@@ -64,7 +64,7 @@ function fix_xml ($xml) {
 		return $tidy;
 	}
 	else{
-		echo "no tidy lib found.\n";
+		//echo "no tidy lib found.\n";
 		return $xml;
 	}
 }
