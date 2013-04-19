@@ -1,2 +1,3 @@
 * unread count is incorrect when a rss belongs to more than one outline.
 * rename all outline to folder.
+* move the cronjob out of the js files.

@@ -142,6 +142,8 @@ opmlend;
 			importFromOpmlText(trim($opml), $user_id);
 			return true;
 		}
+		$url_id = getIdIfExists('SELECT id FROM feeds WHERE link=:link LIMIT 1', array(':link' => $url), 'id');
+		fetchFeedItems($url, $url_id);
 	}
 	catch(Exception $e){
 		return false;
